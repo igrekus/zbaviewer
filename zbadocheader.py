@@ -5,12 +5,13 @@ class DocFormat(Enum):
     TXT = 0
     BIN = 1
 
+
 class ZbaDocHeader:
     """
     ZBA document header class:
     <padding <512 bytes 0x20>>
     <ODB:<filename.OL(12 chars)>,  <format TX|BI>, <E>, <AF sizex*sizey>, <M float_scale,
-    <GF float_max_stamp>, <KR float_min_stamp>, <IV int_dose_list[x,x,x,x,x,x,x,x]>;>
+    <GF float_max_stamp>, <KR float_min_stamp>, <IV float_dose_list[x,x,x,x,x,x,x,x]>;>
     <512 - <size(ODB block) bytes(0x20)> - 1 byte(0x40)>
     """
     front_padding = ""
