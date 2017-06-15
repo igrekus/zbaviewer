@@ -9,7 +9,9 @@ class ZbaUfield:
     init: (float w, float h, list pos[[float x, float y]] list rect[zbarect])
     from_string: accepts string format "U[T|R|W]:list(float x,float y);list(rect);"
     """
+
     size = [200.0, 200.0]  # default size
+    max_matrix_size = 400
 
     def __init__(self, size, pos_list, mask_list, rect_list):
         self.size = size
@@ -19,7 +21,7 @@ class ZbaUfield:
 
     @classmethod
     def from_string(cls, ufield_as_string):
-        if (("UT" not in ufield_as_string) and ("UW" not in ufield_as_string) and ("UW" not in ufield_as_string)
+        if (("UT" not in ufield_as_string) and ("UW" not in ufield_as_string) and ("UR" not in ufield_as_string)
                 and ("UM" not in ufield_as_string)) or ufield_as_string[-1] != ";" or "R" not in ufield_as_string:
             raise ValueError("Wrong ufield string format.")
 
@@ -30,67 +32,83 @@ class ZbaUfield:
         # fill ufield's rect list
         # TODO: use previous rect if no rect specified for this ufield?
         rect_str_list = ["R" + s for s in rectstr.replace("@", "").replace("R", "").split(";")[:-1]]
-        print(rect_str_list)
-
         r_list = []
         for s in rect_str_list:
             r_list.append(zbarect.ZbaRect.from_string(s))
 
-        for r in r_list:
-            r.dump()
+        # fill ufield's positions list
+        p_list = []
+        if "UT" in posstr:
+            p = re.compile(r"^UT:\d*?\.?\d+?,\d*?\.?\d+?;$")
+            if not p.match(posstr):
+                raise ValueError("Wrong UT format string:", posstr)
+            vals = [float(s) for s in posstr.strip("UT:").strip(";").split(",")]
+            p_list.append(vals)
+
+        elif "UR" in posstr:
+            # match "UR:float,float,float,float,int,int;
+            p = re.compile(r"^UR:\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?;$")
+            if not p.match(posstr):
+                raise ValueError("Wrong UR format string:", posstr)
+
+            vals = posstr.strip("UR:").strip(";").split(",")
+
+            x0 = float(vals[0])
+            y0 = float(vals[1])
+            dx = float(vals[2])
+            dy = float(vals[3])
+            nx = int(vals[4])
+            ny = int(vals[5])
+
+            # TODO: make generator
+            for j in range(ny):
+                for i in range(nx):
+                    p_list.append([x0 + int(dx * i * 10)/10, y0 + int(dy * j * 10)/10])
+
+        elif "UW" in posstr:
+            num_coords = posstr.count(",")
+            if not num_coords & 1:
+                raise ValueError("UW format coordinate count must be even:", num_coords + 1)
+
+            posstrlist = posstr.strip("UW:").strip(";").split(",")
+
+            # TODO: refactor into a generator
+            for i, x in enumerate(posstrlist):
+                if not i & 1:
+                    # x
+                    pair = []
+                    pair.append(float(x))
+                else:
+                    # y
+                    pair.append(float(x))
+                    p_list.append(pair)
+
+        if "UM" in posstr:
+            vals = posstr.strip("UM:").strip(";").split(",")
+
+            x0 = float(vals[0])
+            y0 = float(vals[1])
+            dx = float(vals[2])
+            dy = float(vals[3])
+            nx = int(vals[4])
+            ny = int(vals[5])
+            mstr = vals[6]
+
+            if nx * ny > cls.max_matrix_size:
+                raise ValueError("Matrix cannot be bigger than 400 elements:", nx * ny)
+
+            l1 = []
+            for i, s in enumerate(mstr):
+                row = int(i / nx)
+                col = i % nx
+                l1.append([col, row, s])
+
+            # l2 = []
+            # for j in range(ny):
+            #     for i in range(nx):
+            #         l2.append([i, j, mstr[j*nx + i]])
 
         # return cls(200.0, 200.0, pos_list, rect_list)
-
-
-        #
-        # # poslist = posstr.strip("UW:").strip(";").split(",")
-        # pos_list = []
-        # if "UW:" in posstr:
-        #     if not posstr.count(",") & 1:
-        #         raise ValueError("Wrong UW format coordinate count.")
-        #
-        #     # TODO: refactor into a generator
-        #     for i, x in enumerate(posstr.strip("UW:").strip(";").split(",")):
-        #         if not i & 1:
-        #             # x
-        #             pair = []
-        #             pair.append(float(x))
-        #         else:
-        #             # y
-        #             pair.append(float(x))
-        #             pos_list.append(pair)
-        #
-        # elif "UR:" in posstr:
-        #     # match "UR:float,float,float,float,int,int;
-        #     p = re.compile(r"^UR:\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?;$")
-        #     if not p.match(posstr):
-        #         raise ValueError("Wrong UR format.")
-        #
-        #     vals = posstr.strip("UR:").strip(";").split(",")
-        #
-        #     x0 = float(vals[0])
-        #     y0 = float(vals[1])
-        #     dx = float(vals[2])
-        #     dy = float(vals[3])
-        #     nx = int(vals[4])
-        #     ny = int(vals[5])
-        #
-        #     for j in range(ny):
-        #         for i in range(nx):
-        #             pos_list.append([x0 + int(dx * i * 10)/10, y0 + int(dy * j * 10)/10])
-        #
-        # elif "UG:" in posstr:
-        #     p = re.compile(r"^UG:\d*?\.?\d+?,\d*?\.?\d+?;$")
-        #     if not p.match(posstr):
-        #         raise ValueError("Wrong UT format.")
-        #
-        #     vals = [float(s) for s in posstr.strip("UG:").strip(";").split(",")]
-        #
-        #     pos_list.append(vals)
-        #
-        # elif "UM:" in posstr:
-        #     # TODO: from mask
-        #     print("From matrix")
         #
         # else:
         #     raise ValueError("Wrong Ufield specifier")
