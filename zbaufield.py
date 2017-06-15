@@ -83,7 +83,7 @@ class ZbaUfield:
                     pair.append(float(x))
                     p_list.append(pair)
 
-        if "UM" in posstr:
+        elif "UM" in posstr:
             vals = posstr.strip("UM:").strip(";").split(",")
 
             x0 = float(vals[0])
@@ -97,21 +97,22 @@ class ZbaUfield:
             if nx * ny > cls.max_matrix_size:
                 raise ValueError("Matrix cannot be bigger than 400 elements:", nx * ny)
 
-            l1 = []
             for i, s in enumerate(mstr):
                 row = int(i / nx)
                 col = i % nx
-                l1.append([col, row, s])
+
+                if s == "1":
+                    p_list.append([x0 + dx * col, y0 + dy * row])
 
             # l2 = []
             # for j in range(ny):
             #     for i in range(nx):
             #         l2.append([i, j, mstr[j*nx + i]])
 
-        # return cls(200.0, 200.0, pos_list, rect_list)
-        #
-        # else:
-        #     raise ValueError("Wrong Ufield specifier")
+        else:
+            raise ValueError("Wrong Ufield specifier:", posstr)
+
+        return cls(cls.size, p_list, mstr, r_list)
 
     def dump_rects(self):
         for r in self.rect_list:
