@@ -13,7 +13,8 @@ class ZbaUfield:
     size = [200.0, 200.0]  # default size
     max_matrix_size = 400
 
-    def __init__(self, size, pos_list, mask_list, rect_list):
+    def __init__(self, uf_type, size, pos_list, mask_list, rect_list):
+        self.ufield_type = uf_type
         self.size = size
         self.pos_list = pos_list
         self.mask = mask_list
@@ -23,11 +24,12 @@ class ZbaUfield:
     def from_string(cls, ufield_as_string):
         if (("UT" not in ufield_as_string) and ("UW" not in ufield_as_string) and ("UR" not in ufield_as_string)
                 and ("UM" not in ufield_as_string)) or ufield_as_string[-1] != ";" or "R" not in ufield_as_string:
-            raise ValueError("Wrong ufield string format.")
+            raise ValueError("Wrong ufield string format:", ufield_as_string)
 
         pos = ufield_as_string.index(";") + 1
         posstr = ufield_as_string[:pos]
         rectstr = ufield_as_string[pos:]
+        mstr = ""
 
         # fill ufield's rect list
         # TODO: use previous rect if no rect specified for this ufield?
@@ -44,6 +46,7 @@ class ZbaUfield:
                 raise ValueError("Wrong UT format string:", posstr)
             vals = [float(s) for s in posstr.strip("UT:").strip(";").split(",")]
             p_list.append(vals)
+            uftype = "UT"
 
         elif "UR" in posstr:
             # match "UR:float,float,float,float,int,int;
@@ -65,6 +68,8 @@ class ZbaUfield:
                 for i in range(nx):
                     p_list.append([x0 + int(dx * i * 10)/10, y0 + int(dy * j * 10)/10])
 
+            uftype = "UR"
+
         elif "UW" in posstr:
             num_coords = posstr.count(",")
             if not num_coords & 1:
@@ -82,6 +87,7 @@ class ZbaUfield:
                     # y
                     pair.append(float(x))
                     p_list.append(pair)
+            uftype = "UW"
 
         elif "UM" in posstr:
             vals = posstr.strip("UM:").strip(";").split(",")
@@ -108,18 +114,19 @@ class ZbaUfield:
             # for j in range(ny):
             #     for i in range(nx):
             #         l2.append([i, j, mstr[j*nx + i]])
+            uftype = "UM"
 
         else:
             raise ValueError("Wrong Ufield specifier:", posstr)
 
-        return cls(cls.size, p_list, mstr, r_list)
+        return cls(uftype, cls.size, p_list, mstr, r_list)
 
     def dump_rects(self):
         for r in self.rect_list:
             r.dump()
 
     def dump(self):
-        print("UField:(size:", self.size, ")")
+        print("UField:(size:", self.size, " type:", self.ufield_type, ")")
         print("pos:", self.pos_list)
         print("mask:", self.mask)
         print("N rects:", len(self.rect_list))

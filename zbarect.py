@@ -6,7 +6,7 @@ class ZbaRect:
     ZBA rectangle class:
     x, y, height, width, doseid
     init: (float x, float y, float w, float h, int d)
-    from_string: accepts string format "float x,float y,float w,float h[,int doseid[1-8]]"
+    from_string: accepts string format "float x,float y,float w,float h[,int doseid[0-7]]"
     """
 
     def __init__(self, pos, size, d=0):
@@ -28,7 +28,7 @@ class ZbaRect:
             return cls([float(tmp[0]), float(tmp[1])], [float(tmp[2]), float(tmp[3])], 1)
         elif len(tmp) == 5:
             dose = int(tmp[4])
-            if dose not in range(1, 9):
+            if dose not in range(8):
                 raise ValueError("Wrong dose specifier:", dose)
 
             return cls([float(tmp[0]), float(tmp[1])], [float(tmp[2]), float(tmp[3])], dose)
