@@ -6,7 +6,7 @@ class DocFormat(Enum):
     BIN = 1
 
 
-class ZbaDocHeader:
+class ZbaDocHeader(object):
     """
     ZBA document header class:
     <padding <512 bytes 0x20>>

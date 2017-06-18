@@ -3,7 +3,7 @@ import zbarect
 import zbaufield
 
 
-class ZbaTfield:
+class ZbaTfield(object):
     """
     ZBA subfield class:
     list[x, y] list[height, width]
@@ -44,12 +44,6 @@ class ZbaTfield:
                 rectstrlist = ["R" + s for s in tmp[1].split("R")[1:]]
                 for r in rectstrlist:
                     r_list.append(zbarect.ZbaRect.from_string(r.strip(";")))
-
-        for u in u_list:
-            u.dump()
-
-        for r in r_list:
-            r.dump()
 
         # u_list = []
         # for s in ufstrlist:

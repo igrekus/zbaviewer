@@ -2,7 +2,7 @@ import zbarect
 import re
 
 
-class ZbaUfield:
+class ZbaUfield(object):
     """
     ZBA sub-subfield class:
     list[x, y] list[height, width]

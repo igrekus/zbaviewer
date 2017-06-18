@@ -2,7 +2,7 @@ import zbadocheader
 import zbaafield
 
 
-class ZbaDocument:
+class ZbaDocument(object):
     """
     ZBA document class:
     <padding <512 bytes 0x20>>

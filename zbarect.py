@@ -1,7 +1,7 @@
 import re
 
 
-class ZbaRect:
+class ZbaRect(object):
     """
     ZBA rectangle class:
     x, y, height, width, doseid
