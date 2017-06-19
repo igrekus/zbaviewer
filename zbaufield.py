@@ -22,35 +22,39 @@ class ZbaUfield(object):
 
     @classmethod
     def from_string(cls, ufield_as_string):
+        # check ufield signature
         if (("UT" not in ufield_as_string) and ("UW" not in ufield_as_string) and ("UR" not in ufield_as_string)
                 and ("UM" not in ufield_as_string)) or ufield_as_string[-1] != ";" or "R" not in ufield_as_string:
             raise ValueError("Wrong ufield string format:", ufield_as_string)
 
+        # split ufield coords from rect list
         pos = ufield_as_string.index(";") + 1
         posstr = ufield_as_string[:pos]
         rectstr = ufield_as_string[pos:]
         mstr = ""
 
-        # fill ufield's rect list
-        # TODO: use previous rect if no rect specified for this ufield?
+        # fill ufield rect list
         rect_str_list = ["R" + s for s in rectstr.replace("@", "").replace("R", "").split(";")[:-1]]
         r_list = []
         for s in rect_str_list:
             r_list.append(zbarect.ZbaRect.from_string(s))
 
-        # fill ufield's positions list
+        # fill ufield positions list
         p_list = []
         if "UT" in posstr:
+            # check <UT:float,float;> format
             p = re.compile(r"^UT:\d*?\.?\d+?,\d*?\.?\d+?;$")
             if not p.match(posstr):
                 raise ValueError("Wrong UT format string:", posstr)
+
             vals = [float(s) for s in posstr.strip("UT:").strip(";").split(",")]
             p_list.append(vals)
+
             uftype = "UT"
 
         elif "UR" in posstr:
-            # match "UR:float,float,float,float,int,int;
-            p = re.compile(r"^UR:\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?;$")
+            # check <UR:float,float,float,float,int,int;>
+            p = re.compile(r"^UR:\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d+?,\d+?;$")
             if not p.match(posstr):
                 raise ValueError("Wrong UR format string:", posstr)
 
@@ -71,9 +75,10 @@ class ZbaUfield(object):
             uftype = "UR"
 
         elif "UW" in posstr:
-            num_coords = posstr.count(",")
-            if not num_coords & 1:
-                raise ValueError("UW format coordinate count must be even:", num_coords + 1)
+            # check UW coordinate count, even = pass
+            coord_count = posstr.count(",") + 1
+            if coord_count & 1:
+                raise ValueError("UW format coordinate count must be even:", coord_count, posstr)
 
             posstrlist = posstr.strip("UW:").strip(";").split(",")
 
@@ -90,6 +95,10 @@ class ZbaUfield(object):
             uftype = "UW"
 
         elif "UM" in posstr:
+            # check <UR:float,float,float,float,int,int;>
+            p = re.compile(r"^UM:\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?,\d*?,([01])+;$")
+            if not p.match(posstr):
+                raise ValueError("Wrong UM format string:", posstr)
             vals = posstr.strip("UM:").strip(";").split(",")
 
             x0 = float(vals[0])
@@ -126,7 +135,7 @@ class ZbaUfield(object):
             r.dump()
 
     def dump(self):
-        print("UField:(size:", self.size, " type:", self.ufield_type, ")")
+        print("UField:(size:", self.size, "| type:", self.ufield_type, ")")
         print("pos:", self.pos_list)
         print("mask:", self.mask)
         print("N rects:", len(self.rect_list))

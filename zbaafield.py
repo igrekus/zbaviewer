@@ -9,34 +9,37 @@ class ZbaAfield:
     from_string: accepts string format "T[A|R|W]:list(float x,float y);list(ufield);list(rect);"
     """
     pos = [0.0, 0.0]
-    size = [200.0, 200.0]  # default size
-    tfield_list = []
+    size = [3200.0, 3200.0]  # default size
 
-    def __init__(self, x, y, w, h, t_list):
-        self.pos = [x, y]
-        self.size = [w, h]
+    def __init__(self, pos, size, t_list, u_list, r_list):
+        self.pos = pos
+        self.size = size
         self.tfield_list = t_list
+        self.ufield_list = u_list
+        self.rect_list = r_list
 
     @classmethod
     def from_string(cls, afield_as_string):
-        # TODO: make a validator
-        print(afield_as_string)
-        if afield_as_string[0] != "A" \
-                or ";T" not in afield_as_string \
-                or ";U" not in afield_as_string \
-                or ";R" not in afield_as_string:
-            raise ValueError("Wrong tfield string format.")
+        # check afield format
+        if afield_as_string.index("AF") != 0 or ";R" not in afield_as_string:
+            raise ValueError("Wrong afield string format:", afield_as_string)
 
-        delim = afield_as_string.index(";T") + 1
+        # split afield header
+        delim = afield_as_string.index(";") + 1
         posstr = afield_as_string[:delim]
         tfstr = afield_as_string[delim:]
 
-        vals = posstr.strip("AF:").strip(";").split(",")
-        pos = [float(vals[0]), float(vals[1])]
+        # fill position list
+        pos_list = [float(x) for x in posstr.strip("AF:").strip(";").split(",")]
 
-        t_list = [zbatfield.ZbaTfield.from_string("T" + s.strip("@")) for s in tfstr.split("T")[1:]]
+        # fill tfield list
+        tfstrlist = ["T" + s for s in tfstr.replace("UT", "UG").split("T")[1:]]
+        t_list = []
+        for s in tfstrlist:
+            t_list.append(zbatfield.ZbaTfield.from_string(s.replace("UG", "UT").strip("@")))
 
-        return cls(pos[0], pos[1], cls.size[0], cls.size[1], t_list)
+        # TODO: add ufield list and rect list if needed
+        return cls(pos_list, cls.size, t_list, [], [])
 
     def dump(self):
         print("AF(", self.pos, self.size, ")")
