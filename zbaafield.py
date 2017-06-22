@@ -35,6 +35,10 @@ class ZbaAfield:
         # fill tfield list
         tfstrlist = ["T" + s for s in tfstr.replace("UT", "UG").split("T")[1:]]
         t_list = []
+        # print("---------")
+        # for t in tfstrlist:
+        #     print(t)
+
         for s in tfstrlist:
             t_list.append(zbatfield.ZbaTfield.from_string(s.replace("UG", "UT").strip("@")))
 

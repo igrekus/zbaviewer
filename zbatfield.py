@@ -24,7 +24,7 @@ class ZbaTfield(object):
         # check tfield signature
         if (("TA" not in tfield_as_string) and ("TR" not in tfield_as_string) and ("TW" not in tfield_as_string)) \
                 or tfield_as_string[-1] != ";" or "R" not in tfield_as_string:
-            raise ValueError("Wrong ufield string format.")
+            raise ValueError("Wrong ufield string format:", tfield_as_string)
 
         # split tfield header
         delim = tfield_as_string.index(";") + 1
