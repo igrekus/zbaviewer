@@ -1,14 +1,9 @@
-import zbadocheader
-import zbaafield
-
+from zbadocheader import ZbaDocHeader
+from zbaafield import ZbaAfield
 
 class ZbaDocument(object):
     """
     ZBA document class:
-    <padding <512 bytes 0x20>>
-    <ODB:<filename.OL(12 chars)>,  <format TX|BI>, <E>, <AF sizex*sizey>, <M float_scale,
-    <GF float_max_stamp>, <KR float_min_stamp>, <IV int_dose_list[x,x,x,x,x,x,x,x]>;>
-    <512 - <size(ODB block) bytes(0x20)> - 1 byte(0x40)>
     """
     header = object
     afield_list = []
@@ -19,16 +14,30 @@ class ZbaDocument(object):
 
     @classmethod
     def from_string(cls, doc_as_string):
-        tmp = doc_as_string.replace(" ", "").replace("UT", "UG").strip("$").replace("@", "")
-        delim = tmp.index("AF:", 1)
-        hdrstr = tmp[:delim]
-        bodystr = tmp[delim:]
+        # TODO TF size
+        tstr = "".join(doc_as_string.split())
+        tlist = tstr.split(";@", 1)
 
-        hdr = zbadocheader.ZbaDocHeader.from_string(hdrstr)
+        # make header
+        hdr = ZbaDocHeader.from_string(tlist[0] + ";@")
 
-        a_list = [zbaafield.ZbaAfield.from_string("A"+s) for s in bodystr.split("A")[1:]]
+        # make AF list
+        tstr = tlist[1]
+        tlist = ["AF:" + s for s in tstr.split("AF:")[1:]]
+        for s in tlist:
+            # test for empty AF
+            if "TA:" not in s and "TR:" not in s and "TW:" not in s:
+                print("Empty AF (no TAF specified), skip:", s)
+                continue
+            if ";R" not in s:
+                print("Empty AF (no RECT specified), skip:", s)
+                continue
 
-        return cls(hdr, a_list)
+            # make AF list
+            tmpaf = ZbaAfield.from_string(s, af_size=hdr.af_size, tf_size=[200.0, 200.0])
+            break
+
+        # return cls(hdr, a_list)
 
     def dump(self):
         self.header.dump()

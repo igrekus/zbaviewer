@@ -1,49 +1,61 @@
-import zbatfield
+from zbatfield import ZbaTfield
+import re
 
 
 class ZbaAfield:
     """
-    ZBA field class:
+    ZBA AF field class:
     x, y list[height, width]
     init: (list float x, list float y, float w, float h)
     from_string: accepts string format "T[A|R|W]:list(float x,float y);list(ufield);list(rect);"
     """
-    pos = [0.0, 0.0]
-    size = [3200.0, 3200.0]  # default size
 
-    def __init__(self, pos, size, t_list, u_list, r_list):
-        self.pos = pos
-        self.size = size
-        self.tfield_list = t_list
-        self.ufield_list = u_list
-        self.rect_list = r_list
+    def __init__(self, pos=(0, 0,), size=(3200.0, 3200.0,), tf_list=None, uf_list=None, rect_list=None):
+        self.pos = list(pos)
+        self.size = list(size)
+        self.tfield_list = tf_list
+        self.ufield_list = uf_list
+        self.rect_list = rect_list
+
+    def pos_from_string(self, pos_string=None):
+        if pos_string is None:
+            raise ValueError("Pos string can't be None.")
+
+        # check pos_string format
+        r = re.compile(r"^AF:\d*?\.?\d+?,\d*?\.?\d+?;$")
+        if not r.match(pos_string):
+            raise ValueError("Wrong AF position format:", pos_string)
+
+        return [float(x) for x in pos_string.strip("AF:").strip(";").split(",")]
+
 
     @classmethod
-    def from_string(cls, afield_as_string):
-        # check afield format
-        if afield_as_string.index("AF") != 0 or ";R" not in afield_as_string:
-            raise ValueError("Wrong afield string format:", afield_as_string)
+    def from_string(cls, afield_as_string="", af_size=None, tf_size=None):
+        """
+        Parses input AF string to make an AF object. Checks AF pos format, checks TF formats for presens of UF.
+        :param afield_as_string: prepared AF string, must have TF and RECT specifiers 
+        :param af_size: AF size, passed from header
+        :return: AF object
+        """
 
         # split afield header
-        delim = afield_as_string.index(";") + 1
-        posstr = afield_as_string[:delim]
-        tfstr = afield_as_string[delim:]
+        tlist = afield_as_string.split(";", 1)
 
-        # fill position list
-        pos_list = [float(x) for x in posstr.strip("AF:").strip(";").split(",")]
+        # make AF header
+        pos_list = cls.pos_from_string(cls, pos_string=tlist[0] + ";")
 
-        # fill tfield list
-        tfstrlist = ["T" + s for s in tfstr.replace("UT", "UG").split("T")[1:]]
-        t_list = []
-        # print("---------")
-        # for t in tfstrlist:
-        #     print(t)
+        tlist = ["T" + s.replace("UG", "UT") for s in tlist[1].replace("UT", "UG").split("T")[1:]]
 
-        for s in tfstrlist:
-            t_list.append(zbatfield.ZbaTfield.from_string(s.replace("UG", "UT").strip("@")))
+        # make TF list
+        for s in tlist:
+            tf = ZbaTfield.from_string(tfield_as_string=s, tf_size=tf_size)
+            break
 
-        # TODO: add ufield list and rect list if needed
-        return cls(pos_list, cls.size, t_list, [], [])
+        # for s in tfstrlist:
+        #     t_list.append(zbatfield.ZbaTfield.from_string(s.replace("UG", "UT").strip("@")))
+        #
+        # # TODO: add ufield list and rect list if needed
+        # return cls(pos_list, cls.size, t_list, [], [])
 
     def dump(self):
         print("AF(", self.pos, self.size, ")")

@@ -20,7 +20,12 @@ class ZbaTfield(object):
         self.rect_list = r_list
 
     @classmethod
-    def from_string(cls, tfield_as_string):
+    def from_string(cls, tfield_as_string=None, tf_size=None):
+        if tfield_as_string is None or tf_size is None:
+            raise ValueError("TF string and tf_size must not be None.")
+
+        print(tfield_as_string)
+        return
         # check tfield signature
         if (("TA" not in tfield_as_string) and ("TR" not in tfield_as_string) and ("TW" not in tfield_as_string)) \
                 or tfield_as_string[-1] != ";" or "R" not in tfield_as_string:
