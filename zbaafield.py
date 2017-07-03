@@ -17,9 +17,9 @@ class ZbaAfield:
         self.ufield_list = uf_list
         self.rect_list = rect_list
 
-    def pos_from_string(self, pos_string=None):
+    def pos_list_from_string(self, pos_string=None):
         if pos_string is None:
-            raise ValueError("Pos string can't be None.")
+            raise ValueError("Pos string is None.")
 
         # check pos_string format
         r = re.compile(r"^AF:\d*?\.?\d+?,\d*?\.?\d+?;$")
@@ -38,23 +38,23 @@ class ZbaAfield:
         :return: AF object
         """
 
-        # split afield header
-        tlist = afield_as_string.split(";", 1)
+        # split Afield header
+        strlist = afield_as_string.split(";", 1)
 
-        # make AF header
-        pos_list = cls.pos_from_string(cls, pos_string=tlist[0] + ";")
+        # make AF pos list
+        pos_list = cls.pos_list_from_string(cls, pos_string=strlist[0] + ";")
 
-        tlist = ["T" + s.replace("UG", "UT") for s in tlist[1].replace("UT", "UG").split("T")[1:]]
+        tlist = ["T" + s.replace("UG", "UT") for s in strlist[1].replace("UT", "UG").split("T")[1:]]
 
         # make TF list
         for s in tlist:
             tf = ZbaTfield.from_string(tfield_as_string=s, tf_size=tf_size)
             break
 
+        # TODO return class
         # for s in tfstrlist:
         #     t_list.append(zbatfield.ZbaTfield.from_string(s.replace("UG", "UT").strip("@")))
         #
-        # # TODO: add ufield list and rect list if needed
         # return cls(pos_list, cls.size, t_list, [], [])
 
     def dump(self):
