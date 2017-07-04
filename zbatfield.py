@@ -1,6 +1,6 @@
 import re
-import zbarect
-import zbaufield
+from zbarect import ZbaRect
+from zbaufield import ZbaUfield
 
 
 class ZbaTfield(object):
@@ -61,7 +61,7 @@ class ZbaTfield(object):
             raise ValueError("Wrong TW format coordinate count:", coord_count, pos_string)
 
         pos_list = list()
-        # TODO: refactor to a generator
+        # TODO: make generator
         for i, x in enumerate(pos_string.strip("TW:").strip(";").split(",")):
             if not i & 1:
                 # x
@@ -110,16 +110,18 @@ class ZbaTfield(object):
         ustrlist = ["U" + s for s in tmpstr.split("U")[1:]]
 
         for u in ustrlist:
+            # TODO !!!!!!!!! parse different UField formats
             if "UT" not in u and "UR" not in u and "UW" not in u and "UM" not in u:
                 print("no Ufield found, make rects")
             elif "@R" not in u:
                 if u[0] != "U":
                     raise ValueError("Uf string doesn't start from u! Does it have preceding rect?")
 
-                print(u)
-                print("Ufield detected, stray rects not detected. Parse UF")
+                uf = ZbaUfield.from_string(u)
+                print(uf)
             else:
                 print("Ufield with stray rects, separate")
+            break
 
 
         # # make ufield string list
