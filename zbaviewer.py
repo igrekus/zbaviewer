@@ -10,6 +10,16 @@ with open("data/gk41.txt") as f:
 
 doc = ZbaDocument.from_string(content)
 
+# t = "1,1,1,1"
+#
+# x1, x2, x3, x4, x5 = t.split(",")
+#
+# print(x1)
+# print(x2)
+# print(x3)
+# print(x4)
+# print(x5)
+
 # outfile = open("test.txt", "w")
 # outfile.write(content)
 # outfile.close()

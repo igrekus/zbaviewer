@@ -5,18 +5,33 @@ from zbaufield import ZbaUfield
 
 class ZbaTfield(object):
     """
-    ZBA subfield class:
-    list[x, y] list[height, width]
-    init: (list float x, list float y, float w, float h)
-    from_string: accepts string format "T[A|R|W]:list(float x,float y);list(ufield);list(rect);"
+    ZBA TField class.
+    
+    properties: 
+    default_size: [float, float] - default TField size, microns
+    tfield_type: str [TA, TR, TW] - TField type
+    size: [float, float] - actual TField size, microns
+    pos_list: list[float, float] - TField position list, microns
+    ufield_list: list[ZbaUfield] - list of UFields, defined inside current TField
+    rect_list: list[ZbaRect] - list of rectangles, defined inside current TField
+
+    from_string: parses UField string and makes UField object.
     """
 
-    def __init__(self, tf_type=None, size = (200.0, 200.0, ), p_list=None, u_list=None, r_list=None):
-        self.tfield_type = tf_type
-        self.size = list(size)
-        self.pos_list = p_list
-        self.ufield_list = u_list
-        self.rect_list = r_list
+    default_size = [200.0, 200.0]
+
+    def __init__(self, tf_type=None, size=(200.0, 200.0, ), p_list=None, u_list=None, r_list=None):
+        self.tfield_type: str = tf_type
+        self.size: list = list(size)
+        self.pos_list: list = p_list
+        self.ufield_list: list = u_list
+        self.rect_list: list = r_list
+
+    def __str__(self):
+        return "TField(size:" + str(self.size) + ", type:" + self.tfield_type + ")" + \
+            "\npos:" + str(self.pos_list) + \
+            "\nN UFileds:" + str(len(self.ufield_list)) + \
+            "\nN RECTs:" + str(len(self.rect_list))
 
     def pos_list_from_ta_string(self, pos_string=None):
         # check <TA:float,float;>
@@ -106,59 +121,40 @@ class ZbaTfield(object):
         # check data string for Ufield presence
         tmpstr = strlist[1]
 
-        # TODO assume Ufield before rects --- check this!!!
+        # TODO !!! assume Ufield before rects --- confirm this!!!
+        # if strlist[1][0] != "U": # TODO check any rects before UField
         ustrlist = ["U" + s for s in tmpstr.split("U")[1:]]
 
+        uf_list = list()
+        rect_list = list()
+
         for u in ustrlist:
-            # TODO !!!!!!!!! parse different UField formats
             if "UT" not in u and "UR" not in u and "UW" not in u and "UM" not in u:
+                # TODO !!! parse uf-less TField !!!
                 print("no Ufield found, make rects")
+
             elif "@R" not in u:
                 if u[0] != "U":
-                    raise ValueError("Uf string doesn't start from u! Does it have preceding rect?")
+                    raise ValueError("Uf string doesn't start with an U! Does it have preceding rect?")
 
                 uf = ZbaUfield.from_string(u)
-                print(uf)
+
             else:
+                strlist = u.split("@")
+                uf = ZbaUfield.from_string(strlist[0]+"@")
+                rect_str_list = ["R" + s for s in (strlist[1] + ";").split("R")[1:]]
+
+                for r in rect_str_list:
+                    rect_list.append(ZbaRect.from_string(r))
+
+                for r in rect_list:
+                    print(r)
                 print("Ufield with stray rects, separate")
             break
 
 
-        # # make ufield string list
-        # ufstrlist = []
-        # if "U" in ufstr:
-        #     ufstrlist = ["U" + s for s in ufstr.split("U")[1:]]
-        # else:
-        #     ufstrlist.append(ufstr)
-        #
-        # u_list = []
-        # r_list = []
-        # for s in ufstrlist:
-        #     # empty ufield list, fill rects
-        #     if "U" not in s:
-        #         rectstrlist = ["R" + r for r in s.split("R")[1:]]
-        #         for r in rectstrlist:
-        #             r_list.append(zbarect.ZbaRect.from_string(r.strip(";")))
-        #     else:
-        #         # fill ufield list
-        #         if ";@R" not in s:
-        #             u_list.append(zbaufield.ZbaUfield.from_string(s.strip("@")))
-        #         else:
-        #             tmp = s.split("@")
-        #             u_list.append(zbaufield.ZbaUfield.from_string(tmp[0]))
-        #
-        #             rectstrlist = ["R" + s for s in tmp[1].split("R")[1:]]
-        #             for r in rectstrlist:
-        #                 r_list.append(zbarect.ZbaRect.from_string(r.strip(";")))
-        #
         # return cls(tf_type, cls.size, pos_list, u_list, r_list)
 
-    def dump_ufields(self):
+    def print_ufields(self):
         for uf in self.ufield_list:
-            uf.dump()
-
-    def dump(self):
-        print("TField(size:", self.size, "| type:", self.tfield_type, ")")
-        print("pos:", self.pos_list)
-        print("N Ufields:", len(self.ufield_list))
-        print("N rects:", len(self.rect_list))
+            print(uf)
