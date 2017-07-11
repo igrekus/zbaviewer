@@ -4,63 +4,60 @@ import re
 
 class ZbaAfield:
     """
-    ZBA AF field class:
-    x, y list[height, width]
-    init: (list float x, list float y, float w, float h)
-    from_string: accepts string format "T[A|R|W]:list(float x,float y);list(ufield);list(rect);"
+    ZBA AField class.
+
+    properties: 
+    default_size: [float, float] - default AField size, microns
+    size: [float, float] - actual TField size, microns
+    pos_list: list[float, float] - TField position list, microns
+    
+    from_string: parses UField string and makes UField object.
     """
 
-    def __init__(self, pos=(0, 0,), size=(3200.0, 3200.0,), tf_list=None, uf_list=None, rect_list=None):
-        self.pos = list(pos)
-        self.size = list(size)
-        self.tfield_list = tf_list
-        self.ufield_list = uf_list
-        self.rect_list = rect_list
+    default_size = [3200.0, 3200.0]
 
-    def pos_list_from_string(self, pos_string=None):
-        if pos_string is None:
-            raise ValueError("Pos string is None.")
+    def __init__(self, pos=(0, 0,), size=(3200.0, 3200.0,), t_list=None):
+        self.size: list = list(size)
+        self.pos: list = list(pos)
+        self.tfield_list: list = t_list
 
-        # check pos_string format
+    def __str__(self) -> str:
+        return "AF(pos:" + str(self.pos) + " size:" + str(self.size) + ")" + \
+            "\nN TFields:" + str(len(self.tfield_list))
+
+
+    def pos_list_from_string(self, string):
+        # check <AF:float,float;>
         r = re.compile(r"^AF:\d*?\.?\d+?,\d*?\.?\d+?;$")
-        if not r.match(pos_string):
-            raise ValueError("Wrong AF position format:", pos_string)
+        if not r.match(string):
+            raise ValueError("Wrong AF position format:", string)
 
-        return [float(x) for x in pos_string.strip("AF:").strip(";").split(",")]
-
+        p_list = [float(x) for x in string.strip("AF:").strip(";").split(",")]
+        return p_list
 
     @classmethod
     def from_string(cls, afield_as_string="", af_size=None, tf_size=None):
         """
-        Parses input AF string to make an AF object. Checks AF pos format, checks TF formats for presens of UF.
-        :param afield_as_string: prepared AF string, must have TF and RECT specifiers 
-        :param af_size: AF size, passed from header
-        :return: AF object
+        Makes ZbaAfield instance object from a given sanitized string.
+        :param afield_as_string: str - "@<AF>:<position parameter list><TField string>"
+        :param af_size: [float, float] - AField size
+        :param tf_size: [float, float] - TFiled size
+        :return: ZbaUfield instance object
         """
 
         # split Afield header
         strlist = afield_as_string.split(";", 1)
 
         # make AF pos list
-        pos_list = cls.pos_list_from_string(cls, pos_string=strlist[0] + ";")
+        pos_list = cls.pos_list_from_string(cls, string=strlist[0] + ";")
 
-        tlist = ["T" + s.replace("UG", "UT") for s in strlist[1].replace("UT", "UG").split("T")[1:]]
+        tf_str_list = ["T" + s.replace("UG", "UT") for s in strlist[1].replace("UT", "UG").split("T")[1:]]
 
         # make TF list
-        for s in tlist:
-            tf = ZbaTfield.from_string(tfield_as_string=s, tf_size=tf_size)
-            break
+        tf_list = [ZbaTfield.from_string(tfield_as_string=s, tf_size=tf_size) for s in tf_str_list]
 
-        # TODO return class
-        # for s in tfstrlist:
-        #     t_list.append(zbatfield.ZbaTfield.from_string(s.replace("UG", "UT").strip("@")))
-        #
-        # return cls(pos_list, cls.size, t_list, [], [])
+        return cls(pos=pos_list, size=cls.default_size, t_list=tf_list)
 
-    def dump(self):
-        print("AF(", self.pos, self.size, ")")
-        print("N Tfields:", len(self.tfield_list))
-
-    def dump_tfields(self):
+    def print_tfields(self):
         for tf in self.tfield_list:
-            tf.dump()
+            print(tf)

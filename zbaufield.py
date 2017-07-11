@@ -39,7 +39,7 @@ class ZbaUfield(object):
         """
         Internal helper method.
         :param pos_string: 
-        :return: 
+        :return: uf_type, pos_list, m_list
         """
         # TODO parse string and make a proper generator to use later
 
@@ -74,17 +74,13 @@ class ZbaUfield(object):
             nx = int(vals[4])
             ny = int(vals[5])
 
-            p_list = list()
-
-            for p in pos_generator():
-                p_list.append(p)
-
+            p_list = [p for p in pos_generator()]
             return p_list
 
         def from_uw_string(string: str):
 
             def pos_generator():
-                for i, x in enumerate(posstrlist):
+                for i, x in enumerate(string.strip("UW:").strip(";").split(",")):
                     if not i & 1:
                         # x
                         pair = list()
@@ -99,14 +95,8 @@ class ZbaUfield(object):
             if coord_count & 1:
                 raise ValueError("UW format coordinate count must be even:", coord_count, string)
 
-            posstrlist = string.strip("UW:").strip(";").split(",")
-
-            pos_list = list()
-
-            for p in pos_generator():
-                pos_list.append(p)
-
-            return pos_list
+            p_list = [p for p in pos_generator()]
+            return p_list
 
         def from_um_string(string: str):
 
@@ -150,11 +140,8 @@ class ZbaUfield(object):
                 mstr = ""
                 pos_generator = generate_full()
 
-            pos_list = list()
-            for p in pos_generator:
-                pos_list.append(p)
-
-            return pos_list, mstr
+            p_list = [p for p in pos_generator]
+            return p_list, mstr
 
         m_list: str = None
         uf_type: str = None
@@ -185,7 +172,7 @@ class ZbaUfield(object):
     def from_string(cls, ufield_as_string: str):
         """
         Makes ZbaUfield instance object from a given sanitized string.
-        :param ufield_as_string: "@<UT|UW|UR|UM><position parameter list><RECT string>;@"
+        :param ufield_as_string: "<UT|UW|UR|UM>:<position parameter list><RECT string>;@"
         :return: ZbaUfield instance object
         """
         # check ufield signature

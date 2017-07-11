@@ -1,31 +1,41 @@
 from zbadocheader import ZbaDocHeader
 from zbaafield import ZbaAfield
 
+
 class ZbaDocument(object):
     """
-    ZBA document class:
-    """
-    header = object
-    afield_list = []
+    ZBA AField class.
 
-    def __init__(self, hdr, af_list):
-        self.header = hdr
-        self.afield_list = af_list
+    properties: 
+    header: ZbaDocHeader - ZBA document header object
+    afield_list: list[ZbaAfield] - ZBA AField list 
+
+    from_string: parses ZBA document data and makes ZbaDocument object.
+    """
+
+    def __init__(self, header=None, a_list=None):
+        self.header: ZbaDocHeader = header
+        self.afield_list: list = a_list
+
+    def __str__(self) -> str:
+        return str(self.header) + \
+            "\nN AFields:" + str(len(self.afield_list))
 
     @classmethod
     def from_string(cls, doc_as_string):
-        # TODO TF size
-        tstr = "".join(doc_as_string.split())
-        tlist = tstr.split(";@", 1)
+        # TODO TF size (not needed on read)
+        strlist = "".join(doc_as_string.split()).split(";@", 1)
 
         # make header
-        hdr = ZbaDocHeader.from_string(tlist[0] + ";@")
+        hdr = ZbaDocHeader.from_string(strlist[0] + ";@")
 
         # make AF list
-        tstr = tlist[1]
-        tlist = ["AF:" + s for s in tstr.split("AF:")[1:]]
-        for s in tlist:
-            # test for empty AF
+        tmpstr = strlist[1].strip("$")
+        strlist = ["AF:" + s for s in tmpstr.split("AF:")[1:]]
+
+        af_list = list()
+        for s in strlist:
+            # test for empty AFields
             if "TA:" not in s and "TR:" not in s and "TW:" not in s:
                 print("Empty AF (no TAF specified), skip:", s)
                 continue
@@ -34,15 +44,10 @@ class ZbaDocument(object):
                 continue
 
             # make AF list
-            tmpaf = ZbaAfield.from_string(s, af_size=hdr.af_size, tf_size=[200.0, 200.0])
-            break
+            af_list.append(ZbaAfield.from_string(s, af_size=hdr.af_size, tf_size=[200.0, 200.0]))
 
-        # return cls(hdr, a_list)
+        return cls(header=hdr, a_list=af_list)
 
-    def dump(self):
-        self.header.dump()
-        print("N AFields:", len(self.afield_list))
-
-    def dump_afields(self):
+    def print_afields(self):
         for af in self.afield_list:
-            af.dump()
+            print(af)
