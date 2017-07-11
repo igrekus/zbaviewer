@@ -141,7 +141,7 @@ class ZbaTfield(object):
         for u in ustrlist:
             if "UT" not in u and "UR" not in u and "UW" not in u and "UM" not in u:
                 # no UField, make RECTs
-                rect_str_list = ["R" + s for s in u.split("R")[1:]]
+                rect_str_list = ["R" + s + ";" for s in u.strip("R").strip(";").split(";R")]
                 rect_list = [ZbaRect.from_string(r) for r in rect_str_list]
 
             elif "@R" not in u:
@@ -157,7 +157,7 @@ class ZbaTfield(object):
                 uf_list.append(ZbaUfield.from_string(strlist[0] + "@"))
 
                 # prepare RECT strings
-                rect_str_list = ["R" + s for s in (strlist[1]).split("R")[1:]]
+                rect_str_list = ["R" + s + ";" for s in (strlist[1]).strip("R").strip(";").split(";R")]
 
                 # make RECTs
                 rect_list = [ZbaRect.from_string(r) for r in rect_str_list]

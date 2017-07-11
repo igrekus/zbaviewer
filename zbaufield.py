@@ -187,7 +187,7 @@ class ZbaUfield(object):
         uf_type, pos_list, mstr = cls.parse_pos_string(cls, pos_string=strlist[0] + ";")
 
         # make RECT list
-        rect_str_list = ["R" + s + ";" for s in strlist[1].strip("R").strip("@").strip(";").split(";")]
+        rect_str_list = ["R" + s + ";" for s in strlist[1].strip("R").strip("@").strip(";").replace("R", "").split(";")]
         rect_list = [ZbaRect.from_string(s) for s in rect_str_list]
 
         return cls(uf_type=uf_type, size=cls.default_size, pos_list=pos_list, mask_string=mstr, rect_list=rect_list)
