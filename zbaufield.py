@@ -30,10 +30,10 @@ class ZbaUfield(object):
         self.rect_list: list = rect_list
 
     def __str__(self):
-        return "UField:(size:" + str(self.size) + ", type:" + self.ufield_type + ")" + \
-            "\npos:" + str(self.pos_list) + \
-            "\nmask:" + str(self.mask) + \
-            "\nN rects:" + str(len(self.rect_list))
+        return "UField:(size:" + str(self.size) + ", type:" + self.ufield_type + ", N pos:" + str(len(self.pos_list)) + ")" + \
+               "\npos:" + str(self.pos_list) + \
+               "\nmask:" + str(self.mask) + \
+               "\nN rects:" + str(len(self.rect_list))
 
     def parse_pos_string(self, pos_string: str):
         """
@@ -41,6 +41,7 @@ class ZbaUfield(object):
         :param pos_string: 
         :return: uf_type, pos_list, m_list
         """
+
         # TODO parse string and make a proper generator to use later
 
         def from_ut_string(string: str):
@@ -177,7 +178,7 @@ class ZbaUfield(object):
         """
         # check ufield signature
         if (("UT" not in ufield_as_string) and ("UW" not in ufield_as_string) and ("UR" not in ufield_as_string)
-                and ("UM" not in ufield_as_string)) or ufield_as_string[-1] != "@":
+            and ("UM" not in ufield_as_string)) or ufield_as_string[-1] != "@":
             raise ValueError("Wrong ufield string format:", ufield_as_string)
 
         # split UField header

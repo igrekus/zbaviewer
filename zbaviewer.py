@@ -1,32 +1,35 @@
 from zbadocument import ZbaDocument
+import sys
+from PyQt5.QtWidgets import QApplication
+from mainwindow import MainWindow
 
 
-# TODO: check for missing lists
-# with open("data/apr1.txt") as f:
-# with open("data/gk41.txt") as f:
-# with open("data/pln1-.001") as f:
-# with open("data/pln1-.002") as f:
-with open("data/23_test-/test09.txt") as f:
-    content = ''.join(f.readlines())
+def main():
+    app = QApplication(sys.argv)
+    w = MainWindow()
+    w.initApp()
+    w.show()
 
-doc = ZbaDocument.from_string(content)
-print(doc)
-print("--- AF list ---")
-for af in doc.afield_list:
-    print(af)
+    # with open("data/apr1.txt") as f:
+    # with open("data/gk41.txt") as f:
+    # with open("data/pln1-.001") as f:
+    with open("data/pln1-.002") as f:
+    # with open("data/vnec1.d") as f:
+        content = ''.join(f.readlines())
 
-# for tf in doc.afield_list[0].tfield_list:
-#     print(tf)
-# t = "1,1,1,1"
-#
-# x1, x2, x3, x4, x5 = t.split(",")
-#
-# print(x1)
-# print(x2)
-# print(x3)
-# print(x4)
-# print(x5)
+    doc = ZbaDocument.from_string(content)
+    print(sys.getsizeof(doc))
+    print(doc)
+    print("--- AF list ---")
+    for af in doc.afield_list:
+        print(af)
 
-# outfile = open("test.txt", "w")
-# outfile.write(content)
-# outfile.close()
+    print("--- AF ---")
+    print(doc.afield_list[0])
+    print("--- TF ---")
+    print(doc.afield_list[0].tfield_list[0].ufield_list[0])
+
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()

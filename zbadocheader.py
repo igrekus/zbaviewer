@@ -28,7 +28,7 @@ class ZbaDocHeader(object):
                "\nAF size: " + str(self.af_size) + \
                "\nscale factor: " + str(self.scale_factor) + \
                "\nmax stamp: " + str(self.max_stamp) + \
-               "\nmin stamp: " + str(self.min_stamp) + \
+               "\nmin step size: " + str(self.min_stamp) + \
                "\ndoses: " + str(self.doses)
 
     @classmethod

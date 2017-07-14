@@ -28,7 +28,7 @@ class ZbaTfield(object):
         self.rect_list: list = r_list
 
     def __str__(self):
-        return "TField(size:" + str(self.size) + ", type:" + self.tfield_type + ")" + \
+        return "TField(size:" + str(self.size) + ", type:" + self.tfield_type + ", N pos:" + str(len(self.pos_list)) + ")" + \
             "\npos:" + str(self.pos_list) + \
             "\nN UFields:" + str(len(self.ufield_list)) + \
             "\nN RECTs:" + str(len(self.rect_list))
