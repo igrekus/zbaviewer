@@ -46,7 +46,7 @@ class ZbaTfield(object):
             if not p.match(string):
                 raise ValueError("Wrong TA format.")
 
-            p_list = [float(s) for s in string.strip("TA:").strip(";").split(",")]
+            p_list = [[float(s) for s in string.strip("TA:").strip(";").split(",")]]
             return p_list
 
         def from_tr_string(string: str):
@@ -122,6 +122,8 @@ class ZbaTfield(object):
         if tfield_as_string is None or tf_size is None:
             raise ValueError("TF string and tf_size must not be None.")
 
+        print(tfield_as_string)
+
         # split TField header
         strlist = tfield_as_string.split(";", 1)
 
@@ -132,6 +134,7 @@ class ZbaTfield(object):
         tmpstr = strlist[1]
 
         # TODO !!! assume Ufield before rects --- confirm this!!!
+        # FIXME wrong UF split logic, doesn't parse no UF condition
         # if strlist[1][0] != "U": # TODO check any rects before UField
         ustrlist = ["U" + s for s in tmpstr.split("U")[1:]]
 

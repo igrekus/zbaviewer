@@ -51,7 +51,7 @@ class ZbaUfield(object):
                 raise ValueError("Wrong UT format.")
 
             # fill ufield positions list
-            p_list = [float(s) for s in string.strip("UT:").strip(";").split(",")]
+            p_list = [[float(s) for s in string.strip("UT:").strip(";").split(",")]]
             return p_list
 
         def from_ur_string(string: str):
@@ -176,6 +176,7 @@ class ZbaUfield(object):
         :param ufield_as_string: "<UT|UW|UR|UM>:<position parameter list><RECT string>;@"
         :return: ZbaUfield instance object
         """
+
         # check ufield signature
         if (("UT" not in ufield_as_string) and ("UW" not in ufield_as_string) and ("UR" not in ufield_as_string)
             and ("UM" not in ufield_as_string)) or ufield_as_string[-1] != "@":

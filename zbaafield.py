@@ -32,7 +32,8 @@ class ZbaAfield:
         if not r.match(string):
             raise ValueError("Wrong AF position format:", string)
 
-        p_list = [float(x) for x in string.strip("AF:").strip(";").split(",")]
+        p_list = [[float(x) for x in string.strip("AF:").strip(";").split(",")]]
+
         return p_list
 
     @classmethod

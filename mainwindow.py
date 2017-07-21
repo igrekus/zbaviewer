@@ -1,5 +1,7 @@
+from zbarect import ZbaRect
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QGraphicsScene
+from PyQt5.QtWidgets import QMainWindow, QGraphicsScene, QGraphicsRectItem
+from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtCore import Qt
 
 
@@ -20,7 +22,15 @@ class MainWindow(QMainWindow):
         self.scene = QGraphicsScene(self)
 
     def initApp(self):
-
         self.ui.graphicsView.setScene(self.scene)
-        self.scene.addText("Test")
-        self.scene.addRect(0, 0, 10, 10)
+        self.scene.addRect(0, 0, 1, 1)
+
+    def decodeRect(self, rect: ZbaRect, scale):
+        return rect.pos[0]*scale, rect.pos[1]*scale, rect.size[0]*scale, rect.size[1]*scale
+
+    def drawRects(self, rect_list):
+        for r in rect_list:
+            x, y, lx, ly = self.decodeRect(r, 20)
+            rect = QGraphicsRectItem(x, y, lx, ly)
+            rect.setBrush(QBrush(QColor(Qt.gray)))
+            self.scene.addItem(rect)
