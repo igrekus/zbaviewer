@@ -122,7 +122,7 @@ class ZbaTfield(object):
         if tfield_as_string is None or tf_size is None:
             raise ValueError("TF string and tf_size must not be None.")
 
-        print(tfield_as_string)
+        # print(tfield_as_string)
 
         # split TField header
         strlist = tfield_as_string.split(";", 1)
