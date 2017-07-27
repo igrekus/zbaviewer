@@ -1,8 +1,9 @@
+from legend import Legend
 from zbarect import ZbaRect
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QGraphicsScene, QGraphicsRectItem, QGraphicsTextItem
 from PyQt5.QtGui import QBrush, QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRectF
 
 
 # TODO record commentaries from other users
@@ -22,12 +23,25 @@ class MainWindow(QMainWindow):
         self.scene = QGraphicsScene(self)
 
     def initApp(self):
-        self.ui.graphicsView.setScene(self.scene)
+        self.ui.graphicsHudView.setScene(self.scene)
 
-        txt = QGraphicsTextItem("Origin")
-        txt.setPos(0, 0)
-        self.scene.addItem(txt)
+        legend = Legend()
+        legend.setPos(50, 50)
+        self.scene.addItem(legend)
         self.scene.addRect(0, 0, 3, 3)
+
+        self.ui.graphicsHudView.verticalScrollBar().valueChanged.connect(self.onHudViewScroll)
+        # self.ui.graphicsHudView.verticalScrollBar().sliderMoved.connect(self.onHudViewScroll)
+
+        self.ui.graphicsHudView.horizontalScrollBar().valueChanged.connect(self.onHudViewScroll)
+
+    def resizeEvent(self, event):
+        self.ui.graphicsHudView.resize(self.ui.graphicsHudView.size())
+        # self.ui.graphicsHudView.fitInView(self.ui.graphicsHudView.frameRect(), Qt.KeepAspectRatio)
+        super(MainWindow, self).resizeEvent(event)
+
+    def onHudViewScroll(self, int):
+        self.ui.graphicsHudView.hudOverlayScene.update()
 
     def decodeRect(self, rect: ZbaRect, scale):
         return rect.pos[0]*scale, rect.pos[1]*scale, rect.size[0]*scale, rect.size[1]*scale
@@ -38,6 +52,6 @@ class MainWindow(QMainWindow):
             rect = QGraphicsRectItem(x, y, lx, ly)
             rect.setBrush(QBrush(QColor(Qt.gray)))
             self.scene.addItem(rect)
-            print(r)
+        pass
 
 

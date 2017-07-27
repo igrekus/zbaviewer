@@ -92,6 +92,7 @@ class ZbaUfield(object):
                         yield pair
 
             # check UW coordinate count, even = pass
+            # TODO: make regex check
             coord_count = string.count(",") + 1
             if coord_count & 1:
                 raise ValueError("UW format coordinate count must be even:", coord_count, string)
@@ -113,7 +114,7 @@ class ZbaUfield(object):
                     for i in range(nx):
                         yield [x0 + dx * i, y0 + dy * j]
 
-            # check <UR:float,float,float,float,int,int[,array 1|0];>
+            # check <UM:float,float,float,float,int,int[,array 1|0];>
             p = re.compile(r"^UM:\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?\.?\d+?,\d*?,\d*?(,([01])+)?;$")
             if not p.match(string):
                 raise ValueError("Wrong UM format string:", string)
