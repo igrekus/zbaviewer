@@ -1,6 +1,7 @@
 from hudlegend import HudLegend
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsItem, QGraphicsTextItem
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
 from PyQt5.QtGui import QPainter
+from PyQt5.QtCore import QPointF
 
 class GraphicsHudView(QGraphicsView):
 
@@ -11,10 +12,7 @@ class GraphicsHudView(QGraphicsView):
 
         self.hudLegend = HudLegend()
 
-        # text = QGraphicsTextItem("HUD OVERLAY TEXT")
-        # text.setScale(2)
-        # text.setFlag(QGraphicsTextItem.ItemIgnoresTransformations)
-        # self.hudOverlayScene.addItem(text)
+        self.mousePos = QPointF()
 
         self.hudOverlayScene.addItem(self.hudLegend)
 
@@ -28,3 +26,10 @@ class GraphicsHudView(QGraphicsView):
         # p.setRenderHints(self.renderHints())
         self.hudOverlayScene.render(p)
 
+    def mousePressEvent(self, event):
+        self.mousePos = event.pos()
+        super(GraphicsHudView, self).mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        # print("view mouse move event")
+        super(GraphicsHudView, self).mouseMoveEvent(event)
