@@ -23,7 +23,7 @@ class GraphicsHudView(QGraphicsView):
 
     def paintOverlay(self):
         p = QPainter(self.viewport())
-        # p.setRenderHints(self.renderHints())
+        p.setRenderHints(self.renderHints())
         self.hudOverlayScene.render(p)
 
     def mousePressEvent(self, event):

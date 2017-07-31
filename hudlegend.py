@@ -92,25 +92,25 @@ class HudLegend(QGraphicsItem):
         font = painter.font()
         font.setPixelSize(10)
         painter.setFont(font)
-        rect_origin_x = -(sceneOriginInView.x() - axis_origin.x())
-        rect_origin_y =  (sceneOriginInView.y() - axis_origin.y())
+        rect_origin_x = (sceneOriginInView.x() - axis_origin.x())
+        rect_origin_y = (sceneOriginInView.y() - axis_origin.y())
         painter.drawText(axis_origin.x() - 15, axis_origin.y() + 15, str(rect_origin_x/self.zoom_scale) + ":" + str(rect_origin_y/self.zoom_scale))
 
         # draw y marker text
         for i in range(1, ny + 1):
             rect_y = round((rect_origin_y + i * dy)/self.zoom_scale, 2)
             painter.drawText(axis_origin.x() + 10, axis_origin.y() + 3 - i * dy,
-                             str(rect_origin_x / self.zoom_scale) + ":" + str(rect_y))
+                             str(rect_y))
 
         # draw x marker text
         for i in range(1, nx + 1):
             rect_x = round((rect_origin_x + i * dx)/self.zoom_scale, 2)
             painter.drawText(axis_origin.x() - 15 + i * dx, axis_origin.y() + 15 + 10 * (i % 2),
-                             str(rect_x) + ":" + str(rect_origin_y / self.zoom_scale))
+                             str(rect_x))
 
         mp = self.scene().parent().mousePos
-        mp_x = -(sceneOriginInView.x() - mp.x())
-        mp_y =  (sceneOriginInView.y() - mp.y())
+        mp_x = (sceneOriginInView.x() - mp.x())
+        mp_y = (sceneOriginInView.y() - mp.y())
         painter.drawText(hudx + hudw - 120, hudy + 20, "mouse pos: " + str(mp_x/self.zoom_scale) + ":" + str(mp_y/self.zoom_scale))
 
         painter.restore()

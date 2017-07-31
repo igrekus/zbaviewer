@@ -35,17 +35,19 @@ class MainWindow(QMainWindow):
 
     def resizeEvent(self, event):
         self.ui.graphicsHudView.resize(self.ui.graphicsHudView.size())
-        # self.ui.graphicsHudView.fitInView(self.ui.graphicsHudView.frameRect(), Qt.KeepAspectRatio)
+        # self.ui.graphicsHudView.fitInView(self.ui.graphicsHudView.frameGeometry(), Qt.KeepAspectRatio)
         super(MainWindow, self).resizeEvent(event)
 
     def onHudViewScroll(self, int):
-        self.ui.graphicsHudView.hudOverlayScene.items()[0].update(0, 0, 50, 50)
-        # self.ui.graphicsHudView.hudOverlayScene.update()
+        # self.ui.graphicsHudView.hudOverlayScene.items()[0].update(0, 0, 50, 50)
+        # self.ui.graphicsHudView.hudOverlayScene.update()\
+        pass
 
     def decodeRect(self, rect: ZbaRect, scale):
-        return rect.pos[0]*scale, rect.pos[1]*scale, rect.size[0]*scale, rect.size[1]*scale
+        return rect.pos[0]*scale, -rect.pos[1]*scale, rect.size[0]*scale, -rect.size[1]*scale
 
     def drawRects(self, rect_list):
+        # TODO: make ZbaRect = QRect + dose_id + scale(?)
         for r in rect_list:
             x, y, lx, ly = self.decodeRect(r, 50)
             rect = QGraphicsRectItem(0, 0, lx, ly)
