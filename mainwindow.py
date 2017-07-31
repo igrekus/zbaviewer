@@ -1,4 +1,4 @@
-from hudlegend import HudLegend
+from hudlegenditem import HudLegendItem
 from zbarect import ZbaRect
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QGraphicsScene, QGraphicsRectItem
@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
 
         # scene
         self.scene = QGraphicsScene(self)
+
         # origin
         self.originRect = QGraphicsRectItem(0, 0, 4, 4)
         self.originRect.setPos(-2, -2)
@@ -35,12 +36,12 @@ class MainWindow(QMainWindow):
 
     def resizeEvent(self, event):
         self.ui.graphicsHudView.resize(self.ui.graphicsHudView.size())
-        # self.ui.graphicsHudView.fitInView(self.ui.graphicsHudView.frameGeometry(), Qt.KeepAspectRatio)
+        self.ui.graphicsHudView.hudOverlayScene.setSceneRect(self.ui.graphicsHudView.hudOverlayScene.items()[0].boundingRect())
         super(MainWindow, self).resizeEvent(event)
 
     def onHudViewScroll(self, int):
         # self.ui.graphicsHudView.hudOverlayScene.items()[0].update(0, 0, 50, 50)
-        # self.ui.graphicsHudView.hudOverlayScene.update()\
+        # self.ui.graphicsHudView.hudOverlayScene.update()
         pass
 
     def decodeRect(self, rect: ZbaRect, scale):
