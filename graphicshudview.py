@@ -1,9 +1,9 @@
 import random
 from hudlegenditem import HudLegendItem
 from hudoverlayscene import HudOverlayScene
-from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsLineItem
 from PyQt5.QtGui import QPainter
-from PyQt5.QtCore import QPointF, QRectF, Qt
+from PyQt5.QtCore import Qt, QPointF, QRectF, QLineF
 
 
 class GraphicsHudView(QGraphicsView):
@@ -18,6 +18,13 @@ class GraphicsHudView(QGraphicsView):
         self.mousePos = QPointF()
         self.setMouseTracking(True)
 
+        self.rulerP1 = QPointF(0, 0)
+        self.rulerP2 = QPointF(0, 0)
+        self.rulerItem = QGraphicsLineItem()
+        # self.rulerItem.setVisible(False)
+        self.hasRuler = False
+        self.isDrawingRuler = False
+
     def paintEvent(self, event):
         super(GraphicsHudView, self).paintEvent(event)
         # if self.hudOverlayScene is not None:
@@ -29,17 +36,41 @@ class GraphicsHudView(QGraphicsView):
         self.hudOverlayScene.render(p)
 
     def mousePressEvent(self, event):
-        # print("view mouse press event")
+        if not self.hasRuler:
+            pos = self.mapToScene(event.pos())
+            self.scene().addItem(self.rulerItem)
+            self.rulerItem.setLine(0, 0, 0, 0)
+            self.rulerItem.setPos(pos.x(), pos.y())
+            self.rulerP1 = pos
+            self.isDrawingRuler = True
+        else:
+            self.scene().removeItem(self.rulerItem)
+            self.hasRuler = False
+
         super(GraphicsHudView, self).mousePressEvent(event)
 
+    def mouseReleaseEvent(self, event):
+        if self.isDrawingRuler:
+            self.isDrawingRuler = False
+            self.hasRuler = True
+
+        super(GraphicsHudView, self).mouseReleaseEvent(event)
+
     def mouseMoveEvent(self, event):
-        # print("view mouse move event:", event.pos())
-        # self.mousePos = event.pos()
+        # print("mouse move", "ruler?", self.hasRuler, "drawing?", self.isDrawingRuler)
         self.hudOverlayScene.mouseMoveEvent(event)
-        super(GraphicsHudView, self).mouseMoveEvent(event)
         # TODO update only mouse-tracking stuff
         self.viewport().update()
         # self.scene().update()
+
+        if self.isDrawingRuler and (event.buttons() & Qt.LeftButton):
+            pos = self.mapToScene(event.pos())
+            line = self.rulerItem.line()
+            line.setP2(self.rulerItem.mapFromScene(pos))
+            self.rulerItem.setLine(line)
+            self.rulerP2 = pos
+
+        super(GraphicsHudView, self).mouseMoveEvent(event)
 
     def keyPressEvent(self, event):
         key = event.key()

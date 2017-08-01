@@ -117,6 +117,21 @@ class HudLegendItem(QGraphicsItem):
         mp_y = (sceneOriginInView.y() - mp.y())
         painter.drawText(hudx + hudw - 150, hudy + 20, "mouse pos: " + str(mp_x/self.zoom_scale) + ":" + str(mp_y/self.zoom_scale))
 
+        if self.scene().parent().hasRuler:
+            rP1 = self.scene().parent().mapFromScene(self.scene().parent().rulerP1)
+            rP2 = self.scene().parent().mapFromScene(self.scene().parent().rulerP2)
+            rp1_x = -(sceneOriginInView.x() - rP1.x())/self.zoom_scale
+            rp1_y = (sceneOriginInView.y() - rP1.y())/self.zoom_scale
+            rp2_x = -(sceneOriginInView.x() - rP2.x())/self.zoom_scale
+            rp2_y = (sceneOriginInView.y() - rP2.y())/self.zoom_scale
+
+            painter.drawText(hudx + hudw - 150, hudy + 30, "ruler:")
+            painter.drawText(hudx + hudw - 150, hudy + 40, "p1: " + str(rp1_x) + ":" + str(rp1_y))
+            painter.drawText(hudx + hudw - 150, hudy + 50, "p2: " + str(rp2_x) + ":" + str(rp2_y))
+            painter.drawText(hudx + hudw - 150, hudy + 60, "dx: " + str(round(abs(-(rp2_x - rp1_x)), 2)))
+            painter.drawText(hudx + hudw - 150, hudy + 70, "dy: " + str(round(abs(rp2_y - rp1_y), 2)))
+
         self.itemRect = QRectF(0, 0, hudw, hudh)
 
         painter.restore()
+
