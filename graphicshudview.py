@@ -21,9 +21,13 @@ class GraphicsHudView(QGraphicsView):
         self.rulerP1 = QPointF(0, 0)
         self.rulerP2 = QPointF(0, 0)
         self.rulerItem = QGraphicsLineItem()
-        # self.rulerItem.setVisible(False)
+
         self.hasRuler = False
         self.isDrawingRuler = False
+
+    def initView(self):
+        self.scene().addItem(self.rulerItem)
+        self.rulerItem.setVisible(False)
 
     def paintEvent(self, event):
         super(GraphicsHudView, self).paintEvent(event)
@@ -36,23 +40,27 @@ class GraphicsHudView(QGraphicsView):
         self.hudOverlayScene.render(p)
 
     def mousePressEvent(self, event):
-        if not self.hasRuler:
-            pos = self.mapToScene(event.pos())
-            self.scene().addItem(self.rulerItem)
-            self.rulerItem.setLine(0, 0, 0, 0)
-            self.rulerItem.setPos(pos.x(), pos.y())
-            self.rulerP1 = pos
-            self.isDrawingRuler = True
-        else:
-            self.scene().removeItem(self.rulerItem)
-            self.hasRuler = False
+        if event.buttons() == Qt.LeftButton:
+            if not self.hasRuler:
+                pos = self.mapToScene(event.pos())
+                self.scene().addItem(self.rulerItem)
+                # self.rulerItem.setVisible(True)
+                self.rulerItem.setLine(0, 0, 0, 0)
+                self.rulerItem.setPos(pos.x(), pos.y())
+                self.rulerP1 = pos
+                self.isDrawingRuler = True
+            else:
+                # self.rulerItem.setVisible(False)
+                self.scene().removeItem(self.rulerItem)
+                self.hasRuler = False
 
         super(GraphicsHudView, self).mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
-        if self.isDrawingRuler:
-            self.isDrawingRuler = False
-            self.hasRuler = True
+        if event.button() == Qt.LeftButton:
+            if self.isDrawingRuler:
+                self.isDrawingRuler = False
+                self.hasRuler = True
 
         super(GraphicsHudView, self).mouseReleaseEvent(event)
 
@@ -87,4 +95,3 @@ class GraphicsHudView(QGraphicsView):
             # self.translate(0, 10)
             # self.scene().addRect(random.randint(0, 200), -random.randint(0, 200), 10, 10)
         super(GraphicsHudView, self).keyPressEvent(event)
-

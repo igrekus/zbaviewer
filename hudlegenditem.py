@@ -27,12 +27,9 @@ class HudLegendItem(QGraphicsItem):
         self.zoom_scale = scale
 
     def boundingRect(self):
-        # print("boundingRect() call")
         return self.itemRect
-        # return QRectF(0, 0, 500, 500)
 
     def shape(self):
-        # print("shape() call")
         path = QPainterPath()
         path.addRect(self.scene().sceneRect())
         return path
@@ -41,10 +38,7 @@ class HudLegendItem(QGraphicsItem):
         super(HudLegendItem, self).mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        # print(self.flags())
-        # print("hud item mouse move event:", event.pos())
         self.mousePos = event.pos()
-        # super(HudLegend, self).mouseMoveEvent(event)
 
     def paint(self, painter, option, widget=None):
         # TODO: make good names
@@ -52,13 +46,11 @@ class HudLegendItem(QGraphicsItem):
         hudRect = self.scene().parent().frameGeometry()
         hudw = hudRect.width()
         hudh = hudRect.height()
-        sceneOrigin = self.scene().parent().scene().items(Qt.AscendingOrder)[0].mapToScene(2, 2)
-        sceneOriginInView = self.scene().parent().mapFromScene(sceneOrigin)
+        sceneOriginInScene = self.scene().parent().scene().items(Qt.AscendingOrder)[0].mapToScene(2, 2)
+        sceneOriginInView = self.scene().parent().mapFromScene(sceneOriginInScene)
 
         painter.save()
 
-        # p = QPainter()
-        # p.setPen()
         pen = QPen(QColor(Qt.black))
         pen.setWidth(1)
 
@@ -74,13 +66,10 @@ class HudLegendItem(QGraphicsItem):
         painter.drawLine(axis_origin.x(), axis_origin.y(),
                          hudx + hudw - self.px - 20, hudy + hudh - self.py)
 
-        # pen.setColor(QColor(Qt.red))
-        # painter.setPen(pen)
-
-        ny = 10
         nx = 15
-        dy = (hudh - 20 - self.py)/ny
+        ny = 10
         dx = (hudw - self.px - self.px - 20)/nx
+        dy = (hudh - 20 - self.py)/ny
 
         # draw y markers
         for i in range(1, ny + 1):
@@ -96,7 +85,7 @@ class HudLegendItem(QGraphicsItem):
         font = painter.font()
         font.setPixelSize(10)
         painter.setFont(font)
-        rect_origin_x = (sceneOriginInView.x() - axis_origin.x())
+        rect_origin_x = - (sceneOriginInView.x() - axis_origin.x())
         rect_origin_y = (sceneOriginInView.y() - axis_origin.y())
         painter.drawText(axis_origin.x() - 15, axis_origin.y() + 15, str(rect_origin_x/self.zoom_scale) + ":" + str(rect_origin_y/self.zoom_scale))
 
@@ -113,7 +102,7 @@ class HudLegendItem(QGraphicsItem):
                              str(rect_x))
 
         mp = self.mousePos
-        mp_x = (sceneOriginInView.x() - mp.x())
+        mp_x = - (sceneOriginInView.x() - mp.x())
         mp_y = (sceneOriginInView.y() - mp.y())
         painter.drawText(hudx + hudw - 150, hudy + 20, "mouse pos: " + str(mp_x/self.zoom_scale) + ":" + str(mp_y/self.zoom_scale))
 

@@ -29,6 +29,7 @@ class MainWindow(QMainWindow):
 
     def initApp(self):
         self.ui.graphicsHudView.setScene(self.scene)
+        # self.ui.graphicsHudView.initView()
 
         self.ui.graphicsHudView.verticalScrollBar().valueChanged.connect(self.onHudViewScroll)
         # self.ui.graphicsHudView.verticalScrollBar().sliderMoved.connect(self.onHudViewScroll)
