@@ -112,7 +112,7 @@ class ZbaTfield(object):
         return tf_type, pos_list
 
     @classmethod
-    def from_string(cls, tfield_as_string=None, tf_size=None):
+    def from_string(cls, tfield_as_string=None, tf_size=[200.0, 200.0]):
         """
         Makes ZbaTfield instance object from a given sanitized string.
         :param tfield_as_string: str - "@<TA|TA|TA>:<position parameter list>[UField string][RECT string]"

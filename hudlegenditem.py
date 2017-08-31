@@ -104,7 +104,7 @@ class HudLegendItem(QGraphicsItem):
         mp = self.mousePos
         mp_x = - (sceneOriginInView.x() - mp.x())
         mp_y = (sceneOriginInView.y() - mp.y())
-        painter.drawText(hudx + hudw - 150, hudy + 20, "mouse pos: " + str(mp_x/self.zoom_scale) + ":" + str(mp_y/self.zoom_scale))
+        painter.drawText(hudx + hudw - 150, hudy + 20, "mouse pos: " + str(-mp_x/self.zoom_scale) + ":" + str(mp_y/self.zoom_scale))
 
         if self.scene().parent().hasRuler:
             rP1 = self.scene().parent().mapFromScene(self.scene().parent().rulerP1)

@@ -1,7 +1,8 @@
 import re
+from PyQt5.QtWidgets import QGraphicsRectItem
 
 
-class ZbaRect(object):
+class ZbaRect(QGraphicsRectItem):
     """
     ZBA rectangle class.
     
@@ -13,19 +14,36 @@ class ZbaRect(object):
     from_string: makes RECT object from RECT string
     """
 
-    def __init__(self, pos, size, d=0):
+    def __init__(self, x: float=0, y: float=0, w: float=0, h: float=0, d: int=0, parent=None):
+        super(ZbaRect, self).__init__(parent)
         """
         Default constructor, takes:
-        :param pos: List[x: float, y: float] 
-        :param size: List[w: float, h: float] 
+        :param x: float 
+        :param y: float 
+        :param w: float 
+        :param h: float         
         :param d: int, [0-7]
         """
-        self.pos: list = pos
-        self.size: list = size
+        self.setRect(0, 0, w, h)
+        self.posx: float = x
+        self.posy: float = y
         self.dose_id: int = d
 
     def __str__(self):
-        return "Rect(pos:" + str(self.pos) + ", size:" + str(self.size) + ", dose id:" + str(self.dose_id) + ")"
+        return "ZBARect(rect:" + str(self.posx) + ", " + str(self.posy) + ", " + \
+               str(self.rect().width()) + ", " + str(self.rect().height()) + \
+               ", dose id:" + str(self.dose_id) + ")"
+
+    def scaleRect(self, scale):
+        self.posx *= scale
+        self.posy *= scale
+        rect = self.rect()
+        rect.adjust(0, 0, rect.width() * scale, rect.height() * scale)
+        self.setRect(rect)
+
+    @classmethod
+    def fromCopy(cls, src):
+        return cls(src.posx, src.posy, src.rect().width(), src.rect().height(), src.dose_id)
 
     @classmethod
     def from_string(cls, rect_as_string: str):
@@ -42,12 +60,12 @@ class ZbaRect(object):
         tmp = rect_as_string.strip("R").strip(";").split(",")
 
         if len(tmp) == 4:
-            return cls([float(tmp[0]), float(tmp[1])], [float(tmp[2]), float(tmp[3])], 0)
+            return cls(float(tmp[0]), float(tmp[1]), float(tmp[2]), float(tmp[3]), 0)
         elif len(tmp) == 5:
             dose = int(tmp[4].strip("*"))
             if dose not in range(8):
                 raise ValueError("Wrong dose specifier:", dose)
 
-            return cls([float(tmp[0]), float(tmp[1])], [float(tmp[2]), float(tmp[3])], dose)
+            return cls(float(tmp[0]), float(tmp[1]), float(tmp[2]), float(tmp[3]), dose)
         else:
             raise ValueError("Wrong rect parameter list:", tmp)

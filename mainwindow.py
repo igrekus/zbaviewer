@@ -1,12 +1,14 @@
+import copy
+from zbatfield import ZbaTfield
+from zbaufield import ZbaUfield
 from hudlegenditem import HudLegendItem
 from zbarect import ZbaRect
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QGraphicsScene, QGraphicsRectItem
 from PyQt5.QtGui import QBrush, QColor
-from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtCore import Qt
 
 
-# TODO record commentaries from other users
 class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
@@ -45,17 +47,15 @@ class MainWindow(QMainWindow):
         # self.ui.graphicsHudView.hudOverlayScene.update()
         pass
 
-    def decodeRect(self, rect: ZbaRect, scale):
-        return rect.pos[0]*scale, -rect.pos[1]*scale, rect.size[0]*scale, -rect.size[1]*scale
+    def decodeUfield(self, uf: ZbaUfield):
+        scale = 50
+        for p in uf.pos_list:
+            for r in uf.rect_list:
+                tr = ZbaRect.fromCopy(r)
+                tr.setBrush(QBrush(QColor(Qt.gray)))
+                tr.scaleRect(scale)
+                tr.setPos(p[0] * scale + tr.posx, - p[1] * scale - tr.posy - tr.rect().height())
+                self.scene.addItem(tr)
 
-    def drawRects(self, rect_list):
-        # TODO: make ZbaRect = QRect + dose_id + scale(?)
-        for r in rect_list:
-            x, y, lx, ly = self.decodeRect(r, 50)
-            rect = QGraphicsRectItem(0, 0, lx, ly)
-            rect.setBrush(QBrush(QColor(Qt.gray)))
-            self.scene.addItem(rect)
-            rect.setPos(x, y)
-        pass
-
-
+    def decodeTfield(self, tf: ZbaTfield):
+        print(tf)
