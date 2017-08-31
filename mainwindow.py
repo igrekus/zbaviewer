@@ -59,3 +59,7 @@ class MainWindow(QMainWindow):
 
     def decodeTfield(self, tf: ZbaTfield):
         print(tf)
+        for u in tf.ufield_list:
+            print(u)
+            for r in u.rect_list:
+                print(r)
