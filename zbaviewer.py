@@ -31,8 +31,8 @@ def main():
     # uf = ZbaUfield.from_string(txt)
     tf = ZbaTfield.from_string(txt)
 
-    # w.decodeUfield(uf)
-    w.decodeTfield(tf)
+    # w.decodeUfield(uf, 50)
+    w.decodeTfield(tf, 50)
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
