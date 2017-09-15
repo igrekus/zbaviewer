@@ -33,9 +33,9 @@ class MainWindow(QMainWindow):
         self.ui.graphicsHudView.setScene(self.scene)
         # self.ui.graphicsHudView.initView()
 
-        self.ui.graphicsHudView.verticalScrollBar().valueChanged.connect(self.onHudViewScroll)
+        # self.ui.graphicsHudView.verticalScrollBar().valueChanged.connect(self.onHudViewScroll)
         # self.ui.graphicsHudView.verticalScrollBar().sliderMoved.connect(self.onHudViewScroll)
-        self.ui.graphicsHudView.horizontalScrollBar().valueChanged.connect(self.onHudViewScroll)
+        # self.ui.graphicsHudView.horizontalScrollBar().valueChanged.connect(self.onHudViewScroll)
 
     def resizeEvent(self, event):
         self.ui.graphicsHudView.resize(self.ui.graphicsHudView.size())
@@ -47,8 +47,7 @@ class MainWindow(QMainWindow):
         # self.ui.graphicsHudView.hudOverlayScene.update()
         pass
 
-    def decodeUfield(self, uf: ZbaUfield):
-        scale = 50
+    def decodeUfield(self, uf: ZbaUfield, scale: int):
         for p in uf.pos_list:
             for r in uf.rect_list:
                 tr = ZbaRect.fromCopy(r)
@@ -57,9 +56,10 @@ class MainWindow(QMainWindow):
                 tr.setPos(p[0] * scale + tr.posx, - p[1] * scale - tr.posy - tr.rect().height())
                 self.scene.addItem(tr)
 
-    def decodeTfield(self, tf: ZbaTfield):
+    def decodeTfield(self, tf: ZbaTfield, scale: int):
+        print("scale:", scale)
         print(tf)
-        for u in tf.ufield_list:
-            print(u)
-            for r in u.rect_list:
-                print(r)
+        # for u in tf.ufield_list:
+        #     print(u)
+        #     for r in u.rect_list:
+        #         print(r)
