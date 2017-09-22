@@ -39,7 +39,8 @@ class MainWindow(QMainWindow):
 
     def resizeEvent(self, event):
         self.ui.graphicsHudView.resize(self.ui.graphicsHudView.size())
-        self.ui.graphicsHudView.hudOverlayScene.setSceneRect(self.ui.graphicsHudView.hudOverlayScene.items()[0].boundingRect())
+        self.ui.graphicsHudView.hudOverlayScene.setSceneRect(
+            self.ui.graphicsHudView.hudOverlayScene.items()[0].boundingRect())
         super(MainWindow, self).resizeEvent(event)
 
     def onHudViewScroll(self, int):
@@ -47,18 +48,22 @@ class MainWindow(QMainWindow):
         # self.ui.graphicsHudView.hudOverlayScene.update()
         pass
 
-    def decodeUfield(self, uf: ZbaUfield, scale: int):
+    def decodeUfield(self, tfpos: list, uf: ZbaUfield, scale: int):
         for p in uf.pos_list:
             for r in uf.rect_list:
                 tr = ZbaRect.fromCopy(r)
                 tr.setBrush(QBrush(QColor(Qt.gray)))
                 tr.scaleRect(scale)
-                tr.setPos(p[0] * scale + tr.posx, - p[1] * scale - tr.posy - tr.rect().height())
+                tr.setPos((tfpos[0] + p[0])*scale + tr.posx,
+                          -(tfpos[1] + p[1])*scale - tr.posy - tr.rect().height())
                 self.scene.addItem(tr)
 
     def decodeTfield(self, tf: ZbaTfield, scale: int):
         print("scale:", scale)
         print(tf)
+        for p in tf.pos_list[:2]:
+            for u in tf.ufield_list:
+                self.decodeUfield(p, u, scale)
         # for u in tf.ufield_list:
         #     print(u)
         #     for r in u.rect_list:
