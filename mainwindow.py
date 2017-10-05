@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
     def decodeTfield(self, tf: ZbaTfield, scale: int):
         print("scale:", scale)
         print(tf)
-        for p in tf.pos_list[:2]:
+        for p in tf.pos_list:
             for u in tf.ufield_list:
                 self.decodeUfield(p, u, scale)
         # for u in tf.ufield_list:
