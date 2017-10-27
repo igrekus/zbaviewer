@@ -49,6 +49,7 @@ class MainWindow(QMainWindow):
         pass
 
     def decodeUfield(self, tfpos: list, uf: ZbaUfield, scale: int):
+        self.ui.graphicsHudView.hudLegendItem.zoom_scale = scale
         for p in uf.pos_list:
             for r in uf.rect_list:
                 tr = ZbaRect.fromCopy(r)
@@ -59,8 +60,7 @@ class MainWindow(QMainWindow):
                 self.scene.addItem(tr)
 
     def decodeTfield(self, tf: ZbaTfield, scale: int):
-        print("scale:", scale)
-        print(tf)
+        self.ui.graphicsHudView.hudLegendItem.zoom_scale = scale
         for p in tf.pos_list:
             for u in tf.ufield_list:
                 self.decodeUfield(p, u, scale)

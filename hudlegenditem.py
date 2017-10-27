@@ -43,6 +43,8 @@ class HudLegendItem(QGraphicsItem):
     def paint(self, painter, option, widget=None):
         # TODO: make good names
         # TODO: optimize this
+        # TODO: fix number display error, not in micrometers now
+        # TODO: add line length
         hudRect = self.scene().parent().frameGeometry()
         hudw = hudRect.width()
         hudh = hudRect.height()
@@ -87,7 +89,7 @@ class HudLegendItem(QGraphicsItem):
         painter.setFont(font)
         rect_origin_x = - (sceneOriginInView.x() - axis_origin.x())
         rect_origin_y = (sceneOriginInView.y() - axis_origin.y())
-        painter.drawText(axis_origin.x() - 15, axis_origin.y() + 15, str(rect_origin_x/self.zoom_scale) + ":" + str(rect_origin_y/self.zoom_scale))
+        painter.drawText(axis_origin.x() - 15, axis_origin.y() + 15, str(round(rect_origin_x/self.zoom_scale, 2)) + ":" + str(round(rect_origin_y/self.zoom_scale, 2)))
 
         # draw y marker text
         for i in range(1, ny + 1):
@@ -119,8 +121,8 @@ class HudLegendItem(QGraphicsItem):
             painter.drawText(hudx + hudw - 150, hudy + 50, "p2: " + str(rp2_x) + ":" + str(rp2_y))
             painter.drawText(hudx + hudw - 150, hudy + 60, "dx: " + str(round(abs(-(rp2_x - rp1_x)), 2)))
             painter.drawText(hudx + hudw - 150, hudy + 70, "dy: " + str(round(abs(rp2_y - rp1_y), 2)))
+            painter.drawText(hudx + hudw - 150, hudy + 80, "len: " + str("line len"))
 
         self.itemRect = QRectF(0, 0, hudw, hudh)
 
         painter.restore()
-

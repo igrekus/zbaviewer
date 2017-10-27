@@ -80,6 +80,11 @@ class GraphicsHudView(QGraphicsView):
 
         super(GraphicsHudView, self).mouseMoveEvent(event)
 
+    def wheelEvent(self, event):
+        from PyQt5.QtWidgets import QGraphicsScene
+        print("mouse wheel event")
+        super().wheelEvent(event)
+
     def keyPressEvent(self, event):
         key = event.key()
         # if key in (Qt.Key_Up, Qt.Key_Down, Qt.Key_Right, Qt.Key_Left):
