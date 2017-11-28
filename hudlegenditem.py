@@ -1,3 +1,4 @@
+import math
 from PyQt5.QtWidgets import QGraphicsItem
 from PyQt5.QtCore import QRectF, QPointF, Qt
 from PyQt5.QtGui import QPainterPath, QPainter, QPen, QColor
@@ -121,7 +122,8 @@ class HudLegendItem(QGraphicsItem):
             painter.drawText(hudx + hudw - 150, hudy + 50, "p2: " + str(rp2_x) + ":" + str(rp2_y))
             painter.drawText(hudx + hudw - 150, hudy + 60, "dx: " + str(round(abs(-(rp2_x - rp1_x)), 2)))
             painter.drawText(hudx + hudw - 150, hudy + 70, "dy: " + str(round(abs(rp2_y - rp1_y), 2)))
-            painter.drawText(hudx + hudw - 150, hudy + 80, "len: " + str("line len"))
+            painter.drawText(hudx + hudw - 150, hudy + 80,
+                             "len: " + str(round(math.sqrt(pow(rp2_x - rp1_x, 2) + pow(rp2_y - rp1_y, 2)), 2)))
 
         self.itemRect = QRectF(0, 0, hudw, hudh)
 

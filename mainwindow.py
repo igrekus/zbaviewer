@@ -29,6 +29,10 @@ class MainWindow(QMainWindow):
         self.originRect.setPos(-2, -2)
         self.scene.addItem(self.originRect)
 
+        # setup signals
+        self.ui.btnZoomIn.clicked.connect(self.onBtnZoomInClicked)
+        self.ui.btnZoomOut.clicked.connect(self.onBtnZoomOutClicked)
+
     def initApp(self):
         self.ui.graphicsHudView.setScene(self.scene)
         # self.ui.graphicsHudView.initView()
@@ -47,6 +51,12 @@ class MainWindow(QMainWindow):
         # self.ui.graphicsHudView.hudOverlayScene.items()[0].update(0, 0, 50, 50)
         # self.ui.graphicsHudView.hudOverlayScene.update()
         pass
+
+    def onBtnZoomInClicked(self):
+        print("zoom in")
+
+    def onBtnZoomOutClicked(self):
+        print("zoom out")
 
     def decodeUfield(self, tfpos: list, uf: ZbaUfield, scale: int):
         self.ui.graphicsHudView.hudLegendItem.zoom_scale = scale

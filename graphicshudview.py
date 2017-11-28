@@ -11,6 +11,9 @@ class GraphicsHudView(QGraphicsView):
     def __init__(self, parent=None):
         super(GraphicsHudView, self).__init__(parent)
 
+        self.setInteractive(True)
+        self.setDragMode(QGraphicsView.ScrollHandDrag)
+
         self.hudOverlayScene = HudOverlayScene(self)
         self.hudLegendItem = HudLegendItem(zoom=50, rect=QRectF(self.frameGeometry()))
         self.hudOverlayScene.addItem(self.hudLegendItem)
@@ -24,6 +27,7 @@ class GraphicsHudView(QGraphicsView):
 
         self.hasRuler = False
         self.isDrawingRuler = False
+        self.isDragging = False
 
     def initView(self):
         self.scene().addItem(self.rulerItem)
@@ -53,6 +57,8 @@ class GraphicsHudView(QGraphicsView):
                 # self.rulerItem.setVisible(False)
                 self.scene().removeItem(self.rulerItem)
                 self.hasRuler = False
+        # elif event.buttons() == Qt.RightButton:
+        #     self.isDragging = True
 
         super(GraphicsHudView, self).mousePressEvent(event)
 
@@ -61,6 +67,8 @@ class GraphicsHudView(QGraphicsView):
             if self.isDrawingRuler:
                 self.isDrawingRuler = False
                 self.hasRuler = True
+        # elif event.button() == Qt.RightButton:
+        #     self.isDragging = False
 
         super(GraphicsHudView, self).mouseReleaseEvent(event)
 
@@ -78,11 +86,14 @@ class GraphicsHudView(QGraphicsView):
             self.rulerItem.setLine(line)
             self.rulerP2 = pos
 
+        if self.isDragging:
+            pass
+
         super(GraphicsHudView, self).mouseMoveEvent(event)
 
     def wheelEvent(self, event):
         from PyQt5.QtWidgets import QGraphicsScene
-        print("mouse wheel event")
+        # print("mouse wheel event")
         super().wheelEvent(event)
 
     def keyPressEvent(self, event):
