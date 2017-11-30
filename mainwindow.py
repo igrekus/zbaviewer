@@ -1,7 +1,6 @@
 import copy
 from zbatfield import ZbaTfield
 from zbaufield import ZbaUfield
-from hudlegenditem import HudLegendItem
 from zbarect import ZbaRect
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QGraphicsScene, QGraphicsRectItem
@@ -35,6 +34,8 @@ class MainWindow(QMainWindow):
 
     def initApp(self):
         self.ui.graphicsHudView.setScene(self.scene)
+        self.ui.graphicsHudView.setSceneRect(0, 0, 2000000, 2000000)
+        self.ui.graphicsHudView.centerOn(self.originRect)
         # self.ui.graphicsHudView.initView()
 
         # self.ui.graphicsHudView.verticalScrollBar().valueChanged.connect(self.onHudViewScroll)
@@ -53,6 +54,7 @@ class MainWindow(QMainWindow):
         pass
 
     def onBtnZoomInClicked(self):
+        self.ui.graphicsHudView.centerOn(0, 0)
         print("zoom in")
 
     def onBtnZoomOutClicked(self):

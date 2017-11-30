@@ -11,8 +11,8 @@ class GraphicsHudView(QGraphicsView):
     def __init__(self, parent=None):
         super(GraphicsHudView, self).__init__(parent)
 
-        self.setInteractive(True)
-        self.setDragMode(QGraphicsView.ScrollHandDrag)
+        # self.setInteractive(True)
+        # self.setDragMode(QGraphicsView.RubberBandDrag)
 
         self.hudOverlayScene = HudOverlayScene(self)
         self.hudLegendItem = HudLegendItem(zoom=50, rect=QRectF(self.frameGeometry()))
@@ -100,13 +100,13 @@ class GraphicsHudView(QGraphicsView):
         key = event.key()
         # if key in (Qt.Key_Up, Qt.Key_Down, Qt.Key_Right, Qt.Key_Left):
         if key == Qt.Key_Up:
-            self.scene().setSceneRect(self.scene().sceneRect().adjusted(0, +10, 0, 0))
+            self.setSceneRect(self.sceneRect().adjusted(0, +30, 0, 0))
         elif key == Qt.Key_Down:
-            self.scene().setSceneRect(self.scene().sceneRect().adjusted(0, -10, 0, 0))
+            self.setSceneRect(self.sceneRect().adjusted(0, -30, 0, 0))
         elif key == Qt.Key_Left:
-            self.scene().setSceneRect(self.scene().sceneRect().adjusted(+10, 0, 0, 0))
+            self.setSceneRect(self.sceneRect().adjusted(+30, 0, 0, 0))
         elif key == Qt.Key_Right:
-            self.scene().setSceneRect(self.scene().sceneRect().adjusted(-10, 0, 0, 0))
+            self.setSceneRect(self.sceneRect().adjusted(-30, 0, 0, 0))
 
             # self.translate(0, 10)
             # self.scene().addRect(random.randint(0, 200), -random.randint(0, 200), 10, 10)
