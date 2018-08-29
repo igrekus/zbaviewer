@@ -1,39 +1,25 @@
 import re
-# from PyQt5.QtWidgets import QGraphicsRectItem
+import attr
 
 
+@attr.s
 class ZbaRect:
     """
-    ZBA rectangle class.
+    Represents ZBA rectangle
     
-    properties:
-    pos: [float, float] - rectangle position, microns
-    size: [float, float] - rectangle size, microns
-    d: int - dose table ID
+    attrs:
+    x, y: float, float - rectangle position, microns
+    w, h: float, float - rectangle width, microns
+    d: int             - dose table ID
 
     from_string: makes RECT object from RECT string
     """
+    x = attr.ib(type=float, default=0.0)
+    y = attr.ib(type=float, default=0.0)
+    w = attr.ib(type=float, default=0.0)
+    h = attr.ib(type=float, default=0.0)
+    d = attr.ib(type=int, default=1)
 
-    def __init__(self, x: float=0, y: float=0, w: float=0, h: float=0, d: int=0, parent=None):
-        """
-        Default constructor, takes:
-        :param x: float 
-        :param y: float 
-        :param w: float 
-        :param h: float         
-        :param d: int, [0-7]
-        """
-        print("new zbarect")
-        # self.setRect(0, 0, w, h)
-        # self.posx: float = x
-        # self.posy: float = y
-        # self.dose_id: int = d
-
-    # def __str__(self):
-    #     return "ZBARect(rect:" + str(self.posx) + ", " + str(self.posy) + ", " + \
-    #            str(self.rect().width()) + ", " + str(self.rect().height()) + \
-    #            ", dose id:" + str(self.dose_id) + ")"
-    #
     # def scaleRect(self, scale):
     #     self.posx *= scale
     #     self.posy *= scale
