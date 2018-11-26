@@ -36,27 +36,28 @@ def main():
 
 if __name__ == '__main__':
 
-    from pyparsing import Word, srange, nums, ZeroOrMore, Suppress, Literal, Optional, Combine, StringEnd, OneOrMore
+    from pyparsing import Word, srange, nums, ZeroOrMore, Suppress, Literal, Optional, Combine, StringEnd, OneOrMore, delimitedList, Group, Empty
     from pyparsing import pyparsing_common as ppc
 
     # main()
-    # rtext = "R0,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;.2,.1,.8,.1;2.3,.1,.8,.1;4.4,.1,.8,.1;"
-    rtext = "R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;"
+    rtext = "R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;.2,.1,.8,.1;2.3,.1,.8,.1;4.4,.1,.8,.1;"
+    # rtext = "R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;"
     # rtext = 'R0.0,0.2,5.7,0.2,*1;'
     # rtext = 'R0.0,0.2,5.7,0.2;'
 
-    real = Combine(ZeroOrMore(Word(nums)) + Literal('.') + Word(nums)).setName('ZBA real')
-    integer = Word(srange('[1-8]'))
-    rect_mark = Suppress(Literal('R'))
+    zba_real = Word(nums) | ppc.real | Combine((ZeroOrMore(Word(nums)) + Literal('.') + Word(nums)))
+    dose_id = Word(srange('[1-8]')).setName('ZBA dose id')
+    rect_mark = Suppress(Literal('R')).setName('ZBA rect mark')
     comma = Suppress(Literal(','))
     star = Suppress(Literal('*'))
     semicolon = Suppress(Literal(';'))
-    dose = Optional(comma + Combine(star + ppc.integer, adjacent=True), default='1')
+    dose = Optional(Combine(comma + star + dose_id, adjacent=True), default='1')
+    # coords = delimitedList(zba_real, ',')
 
-    rect = rect_mark + real + comma + real + comma + real + comma + real + dose + semicolon
-    rect.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t))
+    rect = Group(rect_mark + zba_real + comma + zba_real + comma + zba_real + comma + zba_real + dose + semicolon).setName("ZBA rect string")
+    # rect.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t))
 
-    rect_list = OneOrMore(rect)
+    rect_list = delimitedList(rect, Empty())
 
     # ppc.comma_separated_list
 
