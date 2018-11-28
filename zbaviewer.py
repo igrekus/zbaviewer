@@ -36,40 +36,35 @@ def main():
 
 if __name__ == '__main__':
 
-    from pyparsing import Word, srange, nums, ZeroOrMore, Suppress, Literal, Optional, Combine, StringEnd, OneOrMore, delimitedList, Group, Empty
-    from pyparsing import pyparsing_common as ppc
+    # Word(nums, exact=N)   # exact number of digits
+    # Combine()             # combine tokens in a single entity
+    # setDefaultWhitespaceChars   # set custom whitespace
+    # setName()             # display pattern name in debug
+    # parseString(str, parseAll=True)   # force to parse whole string
+    # scanString('aaabaaaa', overlap=False)   # scan whole string for all matches, return matches with start end locs
 
-    # main()
-    rtext = "R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;.2,.1,.8,.1;2.3,.1,.8,.1;4.4,.1,.8,.1;"
-    # rtext = "R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;"
-    # rtext = 'R0.0,0.2,5.7,0.2,*1;'
-    # rtext = 'R0.0,0.2,5.7,0.2;'
+    from pyparsing import *
 
-    zba_real = Word(nums) | ppc.real | Combine((ZeroOrMore(Word(nums)) + Literal('.') + Word(nums)))
-    dose_id = Word(srange('[1-8]')).setName('ZBA dose id')
-    rect_mark = Suppress(Literal('R')).setName('ZBA rect mark')
-    comma = Suppress(Literal(','))
-    star = Suppress(Literal('*'))
-    semicolon = Suppress(Literal(';'))
-    dose = Optional(Combine(comma + star + dose_id, adjacent=True), default='1')
-    # coords = delimitedList(zba_real, ',')
+    # text = 'R0,.2,5.7,0.2,*2;'
+    # text = 'R0,.2,5.7,0.2;'
+    # text = "R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;"
+    text = 'R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;'
 
-    rect = Group(rect_mark + zba_real + comma + zba_real + comma + zba_real + comma + zba_real + dose + semicolon).setName("ZBA rect string")
-    # rect.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t))
+    rect_mark = Suppress('R')
+    zba_real = Combine(ZeroOrMore(Word(nums)) + '.' + Word(nums)) | Word(nums)
+    rect_coords = (zba_real + Suppress(',')) * 3 + zba_real
+    dose = Suppress(',*') + Word('12345678', exact=1)
+    semicolon = Suppress(';')
 
-    rect_list = delimitedList(rect, Empty())
+    rect_stub = Group(rect_coords + Optional(dose, default='1') + semicolon)
+    # rect_stub.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t[0]))
 
-    # ppc.comma_separated_list
+    zba_rect_list = OneOrMore(rect_mark + rect_stub)
+    zba_rect_array = rect_mark + rect_stub + ZeroOrMore(rect_stub)
 
-    # rect.setParseAction(lambda s, l, t: ZbaRect(*t))
-    # rect.setParseAction(lambda s, l, t: print(s, l, t))
-    # res = rect.parseString(rtext)
-    # print(res)
-
-    print(rect_list.parseString(rtext))
-
-
-
+    # res = zba_rect_array.parseString(text, parseAll=True)
+    res = zba_rect_list.parseString(text, parseAll=True)
+    print(res)
 
 # TODO try regex parsing
 # https://www.accelebrate.com/blog/pyparseltongue-parsing-text-with-pyparsing/
