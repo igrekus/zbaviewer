@@ -5,17 +5,17 @@ from zbarect import ZbaRect
 class ZbaUfield(object):
     """
     ZBA UField class.
-    
+
     properties:
-    
-    max_um_size: int - maximum UM matrix size 
+
+    max_um_size: int - maximum UM matrix size
     default_size: [float, float] - default UField size, microns
     ufield_type: str [UT, UR, UW, UM] - UField type
     size: [float, float] - actual UField size, microns
     pos_list: list[float, float] - UField position list, microns
-    mask: str - mask string 
+    mask: str - mask string
     rect_list: list[ZbaRect] - list of rectangles, defined inside current UField
-    
+
     from_string: parses UField string and makes UField object.
     """
 
@@ -38,7 +38,7 @@ class ZbaUfield(object):
     def parse_pos_string(self, pos_string: str):
         """
         Internal helper method.
-        :param pos_string: 
+        :param pos_string:
         :return: uf_type, pos_list, m_list
         """
 
@@ -194,6 +194,12 @@ class ZbaUfield(object):
         rect_list = [ZbaRect.from_string(s) for s in rect_str_list]
 
         return cls(uf_type=uf_type, size=cls.default_size, pos_list=pos_list, mask_string=mstr, rect_list=rect_list)
+
+    @classmethod
+    def from_uw_string_list(cls, string_list):
+        uw_coords, *rs = string_list.asList()
+        print('coords:', uw_coords)
+        print('rects:', rs)
 
     def print_rects(self):
         for r in self.rect_list:

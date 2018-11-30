@@ -59,12 +59,6 @@ def parse_header():
 
 
 if __name__ == '__main__':
-    from pyparsing import *
-    from pyparsing import pyparsing_common as ppc
-
-    parse_header()
-
-    sys.exit(1)
     # Word(nums, exact=N)   # exact number of digits
     # Combine()             # combine tokens in a single entity
     # setDefaultWhitespaceChars   # set custom whitespace
@@ -77,23 +71,33 @@ if __name__ == '__main__':
     # text = 'R0,.2,5.7,0.2,*2;'
     # text = 'R0,.2,5.7,0.2;'
     # text = "R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;"
-    text = 'R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;'
+    # text = 'R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;'
+
+    text = "UW:19,11,19,12,19,13,19,14,19,15;R0,0,.5,5;1,0,.5,5;2,0,.5,5;3,0,.5,5;4,0,.5,5;@"
 
     rect_mark = Suppress('R')
+    comma = Suppress(',')
     zba_real = Combine(ZeroOrMore(Word(nums)) + '.' + Word(nums)) | Word(nums)
-    rect_coords = (zba_real + Suppress(',')) * 3 + zba_real
+    rect_coords = (zba_real + comma) * 3 + zba_real
     dose = Suppress(',*') + Word('12345678', exact=1)
     semicolon = Suppress(';')
-
     rect_stub = Group(rect_coords + Optional(dose, default='1') + semicolon)
     # rect_stub.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t[0]))
 
     zba_rect_list = OneOrMore(rect_mark + rect_stub)
     zba_rect_array = rect_mark + rect_stub + ZeroOrMore(rect_stub)
 
+    uw_mark = Suppress('UW:')
+    uw_coords = Group(zba_real + comma + zba_real + ZeroOrMore((comma + zba_real) * 2))
+    at_mark = Suppress('@')
+
+    uw_field = uw_mark + uw_coords + semicolon + zba_rect_array + at_mark
+    uw_field.setParseAction(ZbaUfield.from_uw_string_list)
+
     # res = zba_rect_array.parseString(text, parseAll=True)
-    res = zba_rect_list.parseString(text, parseAll=True)
-    print(res)
+    # res = zba_rect_list.parseString(text, parseAll=True)
+    res = uw_field.parseString(text, parseAll=True)
+    # print(res)
 
 # TODO try regex parsing
 # https://www.accelebrate.com/blog/pyparseltongue-parsing-text-with-pyparsing/
