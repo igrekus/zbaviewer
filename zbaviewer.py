@@ -34,8 +34,37 @@ def main():
     #
     # sys.exit(app.exec_())
 
-if __name__ == '__main__':
+def parse_header():
+    text = '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ODB:GK41   .OL,  TX, E, AF 3200*3200, M 1, GF 6.0, KR 0.2, IV 10,10,10,10,10,10,10,10;                                                                                                                                                                                                                                                                                                                                                                                                                                         @'
 
+    odb_mark = Suppress('ODB:')
+    file_name = Combine(Word(alphanums) + Suppress(ZeroOrMore(' ')) + '.' + Word(alphanums))('file_name')
+    comma = Suppress(',')
+    file_format = oneOf('TX', 'BI')('file_format')
+    data_type = Suppress(oneOf('E', 'P'))('data_type')
+    af_size = Group(Suppress('AF') + ppc.integer + Suppress('*') + ppc.integer)('af_size')
+    m_mark = (Suppress('M') + ppc.integer)('wafer_factor')
+    max_fig = (Suppress('GF') + ppc.real)('max_fig')
+    max_alias = (Suppress('KR') + ppc.real)('max_alias')
+    dose_table = Group(Suppress('IV') + (ppc.integer + comma) * 7 + ppc.integer)('dose_table')
+    semicolon = Suppress(';')
+    at_mark = Suppress('@')
+
+    zba_header = odb_mark + file_name + comma + file_format + comma + data_type + comma + af_size + comma + m_mark + \
+                 comma + max_fig + comma + max_alias + comma + dose_table + semicolon + at_mark
+
+    res = zba_header.parseString(text)
+
+    print(res.dump())
+
+
+if __name__ == '__main__':
+    from pyparsing import *
+    from pyparsing import pyparsing_common as ppc
+
+    parse_header()
+
+    sys.exit(1)
     # Word(nums, exact=N)   # exact number of digits
     # Combine()             # combine tokens in a single entity
     # setDefaultWhitespaceChars   # set custom whitespace
