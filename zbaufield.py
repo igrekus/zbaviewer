@@ -47,6 +47,42 @@ class ZbaUfield(object):
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
         return cls('UW', (200.0, 200.0), poss, '', rects)
 
+    @classmethod
+    def from_ut_string_list(cls, params):
+        ps, *rs = params.asList()
+
+        rects = [ZbaRect.from_string_list(vals) for vals in rs]
+        return cls('UT', (200.0, 200.0), [ps], '', rects)
+
+    @classmethod
+    def from_ur_string_list(cls, params):
+        ps, *rs = params.asList()
+
+        print(ps)
+        print(rs)
+
+
+        # def pos_generator():
+        #     for i, x in enumerate(string.strip("UW:").strip(";").split(",")):
+        #         if not i & 1:
+        #             # x
+        #             pair = list()
+        #             pair.append(float(x))
+        #         else:
+        #             # y
+        #             pair.append(float(x))
+        #             yield pair
+        #
+        # # check UW coordinate count, even = pass
+        # # TODO: make regex check
+        # coord_count = string.count(",") + 1
+        # if coord_count & 1:
+        #     raise ValueError("UW format coordinate count must be even:", coord_count, string)
+        #
+        # p_list = [p for p in pos_generator()]
+        # return p_list
+        #
+        #
 #     def parse_pos_string(self, pos_string: str):
 #         """
 #         Internal helper method.
@@ -206,13 +242,3 @@ class ZbaUfield(object):
 #         rect_list = [ZbaRect.from_string(s) for s in rect_str_list]
 #
 #         return cls(uf_type=uf_type, size=cls.default_size, pos_list=pos_list, mask_string=mstr, rect_list=rect_list)
-#
-#     @classmethod
-#     def from_uw_string_list(cls, string_list):
-#         uw_coords, *rs = string_list.asList()
-#         print('coords:', uw_coords)
-#         print('rects:', rs)
-#
-#     def print_rects(self):
-#         for r in self.rect_list:
-#             print(r)
