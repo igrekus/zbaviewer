@@ -70,14 +70,17 @@ if __name__ == '__main__':
 
     # text = 'R0,.2,5.7,0.2,*2;'
     # text = 'R0,.2,5.7,0.2;'
-    # text = "R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;"
+    # text = 'R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;'
     # text = 'R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;'
 
-    text = "UW:19,11,19,12,19,13,19,14,19,15;R0,0,.5,5;1,0,.5,5;2,0,.5,5;3,0,.5,5;4,0,.5,5;@"
+    # uw_text = 'UW:19,11,19,12,19,13,19,14,19,15;R0,0,.5,5;1,0,.5,5;2,0,.5,5;3,0,.5,5;4,0,.5,5;@'
+    uw_text = 'UW:19,11,19,12,19,13,19,14,19,15;R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;@'
+    ut_text = 'UT:0,0;R0,0,6.4,6.4;R6.4,6.4,6.4,6.4;@'
+    ur_text = 'UR:0,0,1.3,25.6,20,1;R0,0,0.7,25.6;@'
 
     rect_mark = Suppress('R')
     comma = Suppress(',')
-    zba_real = Combine(ZeroOrMore(Word(nums)) + '.' + Word(nums)) | Word(nums)
+    zba_real = Combine(ZeroOrMore(Word(nums)) + '.' + Word(nums)) ^ Word(nums)
     rect_coords = (zba_real + comma) * 3 + zba_real
     dose = Suppress(',*') + Word('12345678', exact=1)
     semicolon = Suppress(';')
@@ -88,15 +91,23 @@ if __name__ == '__main__':
     zba_rect_array = rect_mark + rect_stub + ZeroOrMore(rect_stub)
 
     uw_mark = Suppress('UW:')
-    uw_coords = Group(zba_real + comma + zba_real + ZeroOrMore((comma + zba_real) * 2))
+    ut_mark = Suppress('UT:')
+    ur_mark = Suppress('UR:')
+    uf_coords = Group(zba_real + comma + zba_real + ZeroOrMore((comma + zba_real) * 2))
     at_mark = Suppress('@')
 
-    uw_field = uw_mark + uw_coords + semicolon + zba_rect_array + at_mark
-    uw_field.setParseAction(ZbaUfield.from_uw_string_list)
+    uw_field = uw_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    # uw_field.setParseAction(ZbaUfield.from_uw_string_list)
 
-    # res = zba_rect_array.parseString(text, parseAll=True)
-    # res = zba_rect_list.parseString(text, parseAll=True)
-    res = uw_field.parseString(text, parseAll=True)
+    ut_field = ut_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    # ut_field.setParseAction(ZbaUfield.from_ut_string_list)
+
+    ur_field = ur_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    ur_field.setParseAction(ZbaUfield.from_ur_string_list)
+
+    # res = ut_field.parseString(ut_text, parseAll=True)
+    # res = uw_field.parseString(uw_text, parseAll=True)
+    res = ur_field.parseString(ur_text, parseAll=True)
     # print(res)
 
 # TODO try regex parsing
