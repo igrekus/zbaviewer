@@ -3,7 +3,7 @@ import attr
 from zbarect import ZbaRect
 
 max_um_size = 400
-default_uf_size = [200.0, 200.0]
+default_uf_size = (200.0, 200.0)
 
 @attr.s
 class ZbaUfield(object):
@@ -45,62 +45,36 @@ class ZbaUfield(object):
                 lst = list()
 
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
-        return cls('UW', (200.0, 200.0), poss, '', rects)
+        return cls('UW', default_uf_size, poss, '', rects)
 
     @classmethod
     def from_ut_string_list(cls, params):
         ps, *rs = params.asList()
 
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
-        return cls('UT', (200.0, 200.0), [ps], '', rects)
+        return cls('UT', default_uf_size, [ps], '', rects)
 
     @classmethod
     def from_ur_string_list(cls, params):
         ps, *rs = params.asList()
 
-        print(ps)
-        print(rs)
+        x0, y0, dx, dy, nx, ny = map(float, ps)
+        nx, ny = int(nx), int(ny)
 
+        def pos_generator():
+            for j in range(ny):
+                for i in range(nx):
+                    yield [x0 + int(dx * i * 10) / 10, y0 + int(dy * j * 10) / 10]
 
-        # def pos_generator():
-        #     for i, x in enumerate(string.strip("UW:").strip(";").split(",")):
-        #         if not i & 1:
-        #             # x
-        #             pair = list()
-        #             pair.append(float(x))
-        #         else:
-        #             # y
-        #             pair.append(float(x))
-        #             yield pair
-        #
-        # # check UW coordinate count, even = pass
-        # # TODO: make regex check
-        # coord_count = string.count(",") + 1
-        # if coord_count & 1:
-        #     raise ValueError("UW format coordinate count must be even:", coord_count, string)
-        #
-        # p_list = [p for p in pos_generator()]
-        # return p_list
-        #
-        #
+        rects = [ZbaRect.from_string_list(vals) for vals in rs]
+        return cls('UR', default_uf_size, list(pos_generator()), '', rects)
+
 #     def parse_pos_string(self, pos_string: str):
 #         """
 #         Internal helper method.
 #         :param pos_string:
 #         :return: uf_type, pos_list, m_list
 #         """
-#
-#         # TODO parse string and make a proper generator to use later
-#
-#         def from_ut_string(string: str):
-#             # check <UT:float,float;>
-#             p = re.compile(r"^UT:\d*?\.?\d+?,\d*?\.?\d+?;$")
-#             if not p.match(string):
-#                 raise ValueError("Wrong UT format.")
-#
-#             # fill ufield positions list
-#             p_list = [[float(s) for s in string.strip("UT:").strip(";").split(",")]]
-#             return p_list
 #
 #         def from_ur_string(string: str):
 #
