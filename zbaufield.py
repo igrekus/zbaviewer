@@ -45,14 +45,14 @@ class ZbaUfield(object):
                 lst = list()
 
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
-        return cls('UW', (200.0, 200.0), poss, '', rects)
+        return cls('UW', default_uf_size, poss, '', rects)
 
     @classmethod
     def from_ut_string_list(cls, params):
         ps, *rs = params.asList()
 
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
-        return cls('UT', (200.0, 200.0), [ps], '', rects)
+        return cls('UT', default_uf_size, [ps], '', rects)
 
     @classmethod
     def from_ur_string_list(cls, params):
