@@ -3,7 +3,7 @@ import attr
 from zbarect import ZbaRect
 
 max_um_size = 400
-default_uf_size = [200.0, 200.0]
+default_uf_size = (200.0, 200.0)
 
 @attr.s
 class ZbaUfield(object):
