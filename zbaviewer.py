@@ -67,6 +67,8 @@ if __name__ == '__main__':
     uw_text = 'UW:19,11,19,12,19,13,19,14,19,15;R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;@'
     ut_text = 'UT:0,0;R0,0,6.4,6.4;R6.4,6.4,6.4,6.4;@'
     ur_text = 'UR:0,0,1.3,25.6,3,3;R0,0,0.7,25.6;@'
+    um_text = 'UM:0,0,10,10,20,20,0000000000000111111100000000000001111111000000000000001111110000000000000011111100000000000000011111000000000000000111110000000000000000111100000000000000001111000000000000000001110000000000000000011100000000000000000011000000000000000000110000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;R0,0,.5,5;1,0,.5,5;2,0,.5,5;3,0,.5,5;4,0,.5,5;5,0,.5,5;@'
+    # um_text = 'UM:0,0,10,10,20,20;R0,0,.5,5;1,0,.5,5;2,0,.5,5;3,0,.5,5;4,0,.5,5;5,0,.5,5;@'
 
     rect_mark = Suppress('R')
     comma = Suppress(',')
@@ -95,9 +97,15 @@ if __name__ == '__main__':
     ur_field = ur_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
     ur_field.setParseAction(ZbaUfield.from_ur_string_list)
 
+    um_mark = Suppress('UM:')
+    um_matrix = Word('10')
+    um_field = um_mark + uf_coords + Optional(comma + um_matrix, default='full') + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    um_field.setParseAction(ZbaUfield.from_um_string_list)
+
     # res = ut_field.parseString(ut_text, parseAll=True)
     # res = uw_field.parseString(uw_text, parseAll=True)
-    res = ur_field.parseString(ur_text, parseAll=True)
+    # res = ur_field.parseString(ur_text, parseAll=True)
+    res = um_field.parseString(um_text, parseAll=True)
     # print(res)
 
 # TODO try regex parsing
