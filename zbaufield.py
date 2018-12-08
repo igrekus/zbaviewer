@@ -69,6 +69,14 @@ class ZbaUfield(object):
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
         return cls('UR', default_uf_size, list(pos_generator()), '', rects)
 
+    @classmethod
+    def from_um_string_list(cls, params):
+        ps, mat, *rs = params
+
+        print(ps)
+        print(mat)
+        print(rs)
+
 #     def parse_pos_string(self, pos_string: str):
 #         """
 #         Internal helper method.
