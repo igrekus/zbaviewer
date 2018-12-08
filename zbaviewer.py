@@ -82,18 +82,18 @@ if __name__ == '__main__':
     zba_rect_list = OneOrMore(rect_mark + rect_stub)
     zba_rect_array = rect_mark + rect_stub + ZeroOrMore(rect_stub)
 
-    uw_mark = Suppress('UW:')
-    ut_mark = Suppress('UT:')
-    ur_mark = Suppress('UR:')
     uf_coords = Group(zba_real + comma + zba_real + ZeroOrMore((comma + zba_real) * 2))
     at_mark = Suppress('@')
 
+    uw_mark = Suppress('UW:')
     uw_field = uw_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
     # uw_field.setParseAction(ZbaUfield.from_uw_string_list)
 
+    ut_mark = Suppress('UT:')
     ut_field = ut_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
     # ut_field.setParseAction(ZbaUfield.from_ut_string_list)
 
+    ur_mark = Suppress('UR:')
     ur_field = ur_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
     ur_field.setParseAction(ZbaUfield.from_ur_string_list)
 
