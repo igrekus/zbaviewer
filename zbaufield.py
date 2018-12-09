@@ -73,7 +73,13 @@ class ZbaUfield(object):
     def from_um_string_list(cls, params):
         ps, mat, *rs = params
 
-        print(ps)
+        x0, y0, dx, dy, nx, ny = map(float, ps)
+        nx, ny = int(nx), int(ny)
+
+        if nx * ny != len(mat):
+            raise ValueError('Matrix pattern does not cover all positions.')
+
+        print(x0, y0, dx, dy, nx, ny)
         print(mat)
         print(rs)
 
