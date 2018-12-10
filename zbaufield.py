@@ -79,9 +79,17 @@ class ZbaUfield(object):
         if nx * ny != len(mat):
             raise ValueError('Matrix pattern does not cover all positions.')
 
-        print(x0, y0, dx, dy, nx, ny)
-        print(mat)
-        print(rs)
+        # TODO verify matrix matches
+
+        def pos_generator(mat):
+            for j in range(ny):
+                for i in range(nx):
+                    if mat[i + j * nx] == '1':
+                        yield [x0 + int(dx * i * 10) / 10, y0 + int(dy * j * 10) / 10]
+
+        # poss = [pos for pos, flag in zip(pos_generator(), mat) if flag == '1']
+        rects = [ZbaRect.from_string_list(vals) for vals in rs]
+        return cls('UM', default_uf_size, [pos for pos, flag in zip(pos_generator(mat), mat)], '', rects)
 
 #     def parse_pos_string(self, pos_string: str):
 #         """
