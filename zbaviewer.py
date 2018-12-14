@@ -79,34 +79,34 @@ if __name__ == '__main__':
     rect_stub = Group(rect_coords + Optional(dose, default='1') + semicolon)
     # rect_stub.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t[0]))
 
-    zba_rect_list = OneOrMore(rect_mark + rect_stub)
-    zba_rect_array = rect_mark + rect_stub + ZeroOrMore(rect_stub)
+    zba_rect_array = OneOrMore(rect_mark + rect_stub)
+    zba_rect_list = rect_mark + rect_stub + ZeroOrMore(rect_stub)
 
     uf_coords = Group(zba_real + comma + zba_real + ZeroOrMore((comma + zba_real) * 2))
     at_mark = Suppress('@')
 
     uw_mark = Suppress('UW:')
-    uw_field = uw_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    uw_field = uw_mark + uf_coords + semicolon + (zba_rect_list ^ zba_rect_array) + at_mark
     # uw_field.setParseAction(ZbaUfield.from_uw_string_list)
 
     ut_mark = Suppress('UT:')
-    ut_field = ut_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    ut_field = ut_mark + uf_coords + semicolon + (zba_rect_list ^ zba_rect_array) + at_mark
     # ut_field.setParseAction(ZbaUfield.from_ut_string_list)
 
     ur_mark = Suppress('UR:')
-    ur_field = ur_mark + uf_coords + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
-    ur_field.setParseAction(ZbaUfield.from_ur_string_list)
+    ur_field = ur_mark + uf_coords + semicolon + (zba_rect_list ^ zba_rect_array) + at_mark
+    # ur_field.setParseAction(ZbaUfield.from_ur_string_list)
 
     um_mark = Suppress('UM:')
     um_matrix = Word('10')
-    um_field = um_mark + uf_coords + Optional(comma + um_matrix, default='full') + semicolon + (zba_rect_array ^ zba_rect_list) + at_mark
+    um_field = um_mark + uf_coords + Optional(comma + um_matrix, default='full') + semicolon + (zba_rect_list ^ zba_rect_array) + at_mark
     um_field.setParseAction(ZbaUfield.from_um_string_list)
 
     # res = ut_field.parseString(ut_text, parseAll=True)
     # res = uw_field.parseString(uw_text, parseAll=True)
     # res = ur_field.parseString(ur_text, parseAll=True)
     res = um_field.parseString(um_text, parseAll=True)
-    # print(res)
+    print(res)
 
 # TODO try regex parsing
 # https://www.accelebrate.com/blog/pyparseltongue-parsing-text-with-pyparsing/
