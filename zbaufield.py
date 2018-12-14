@@ -76,6 +76,10 @@ class ZbaUfield(object):
         x0, y0, dx, dy, nx, ny = map(float, ps)
         nx, ny = int(nx), int(ny)
 
+        if mat == 'full':
+            mat = ''.join(['1'] * (nx * ny))
+            print(mat)
+
         if nx * ny != len(mat):
             raise ValueError('Matrix pattern does not cover all positions.')
 
