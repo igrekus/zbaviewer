@@ -91,7 +91,6 @@ class ZbaUfield(object):
                     if mat[i + j * nx] == '1':
                         yield [x0 + int(dx * i * 10) / 10, y0 + int(dy * j * 10) / 10]
 
-        # poss = [pos for pos, flag in zip(pos_generator(), mat) if flag == '1']
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
         return cls('UM', default_uf_size, [pos for pos, flag in zip(pos_generator(mat), mat)], '', rects)
 
