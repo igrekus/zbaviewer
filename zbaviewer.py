@@ -79,6 +79,8 @@ if __name__ == '__main__':
     rect_stub = Group(rect_coords + Optional(dose, default='1') + semicolon)
     # rect_stub.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t[0]))
 
+    tri_mark = Suppress('D')
+
     zba_rect_array = OneOrMore(rect_mark + rect_stub)
     zba_rect_list = rect_mark + rect_stub + ZeroOrMore(rect_stub)
 
