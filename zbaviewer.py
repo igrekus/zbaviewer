@@ -74,7 +74,7 @@ if __name__ == '__main__':
     comma = Suppress(',')
     zba_real = Combine(ZeroOrMore(Word(nums)) + '.' + Word(nums)) ^ Word(nums)
     rect_coords = (zba_real + comma) * 3 + zba_real
-    dose = Suppress(',*') + Word('12345678', exact=1)
+    dose = Suppress(',*') + Word('01234567', exact=1)
     semicolon = Suppress(';')
     rect_stub = Group(rect_coords + Optional(dose, default='1') + semicolon)
     # rect_stub.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t[0]))
