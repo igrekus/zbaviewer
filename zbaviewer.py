@@ -76,13 +76,13 @@ if __name__ == '__main__':
     rect_coords = (zba_real + comma) * 3 + zba_real
     dose = Suppress(',*') + Word('01234567', exact=1)
     semicolon = Suppress(';')
-    rect_stub = Group(rect_coords + Optional(dose, default='1') + semicolon)
+    rect_params = Group(rect_coords + Optional(dose, default='0') + semicolon)
     # rect_stub.setParseAction(lambda s, l, t: ZbaRect.from_string_list(t[0]))
 
     tri_mark = Suppress('D')
 
-    zba_rect_array = OneOrMore(rect_mark + rect_stub)
-    zba_rect_list = rect_mark + rect_stub + ZeroOrMore(rect_stub)
+    zba_rect_array = OneOrMore(rect_mark + rect_params)
+    zba_rect_list = rect_mark + rect_params + ZeroOrMore(rect_params)
 
     uf_coords = Group(zba_real + comma + zba_real + ZeroOrMore((comma + zba_real) * 2))
     at_mark = Suppress('@')
