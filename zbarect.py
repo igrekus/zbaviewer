@@ -10,7 +10,7 @@ class  ZbaRect:
     attrs:
     x, y: float, float (any)   - rectangle position, microns
     w, h: float, float (amy)   - rectangle width, microns (any)
-    d: int             ([1-8]) - dose table ID
+    d: int             ([0-7]) - dose table ID
 
     from_string: makes RECT object from RECT string
     """
