@@ -18,7 +18,7 @@ class  ZbaRect:
     y = attr.ib(type=float, default=0.0)
     w = attr.ib(type=float, default=0.0)
     h = attr.ib(type=float, default=0.0)
-    d = attr.ib(type=int, default=1)
+    d = attr.ib(type=int, default=0)
 
     @d.validator
     def check(self, attribute, value):
