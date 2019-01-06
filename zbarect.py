@@ -10,7 +10,7 @@ class  ZbaRect:
     attrs:
     x, y: float, float (any)   - rectangle position, microns
     w, h: float, float (amy)   - rectangle width, microns (any)
-    d: int             ([0-7]) - dose table ID
+    d: int             (0-7)   - dose table ID
 
     from_string: makes RECT object from RECT string
     """
@@ -18,7 +18,7 @@ class  ZbaRect:
     y = attr.ib(type=float, default=0.0)
     w = attr.ib(type=float, default=0.0)
     h = attr.ib(type=float, default=0.0)
-    d = attr.ib(type=int, default=1)
+    d = attr.ib(type=int, default=0)
 
     @d.validator
     def check(self, attribute, value):
