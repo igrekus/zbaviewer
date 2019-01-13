@@ -23,7 +23,7 @@ class  ZbaRect:
     @d.validator
     def check(self, attribute, value):
         if not 0 <= value <= 7:
-            raise ValueError('Dose must be in the range [1..8]')
+            raise ValueError('Dose must be in the range [0..7]')
 
     @classmethod
     def from_string_list(cls, params):
