@@ -1,9 +1,8 @@
-import re
 import attr
 
 
 @attr.s
-class  ZbaRect:
+class ZbaRect:
     """
     Represents a ZBA rectangle
     
