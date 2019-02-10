@@ -1,9 +1,8 @@
-import re
 import attr
 
 
 @attr.s
-class  ZbaTri:
+class ZbaTri:
     """
     Represents a ZBA triangle
     # x, y, height, type, dose
