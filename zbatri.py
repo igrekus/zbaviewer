@@ -5,12 +5,11 @@ import attr
 class ZbaTri:
     """
     Represents a ZBA triangle
-    # x, y, height, type, dose
 
     attrs:
     x, y: float, float   - triangle position, microns
     h: float             - triangle cathetus, microns
-    t: int (0-7)         - triangle position
+    t: int (0-7)         - triangle orientation
     d: int (0-7)         - dose table ID
     """
     x = attr.ib(type=float, default=0.0)
