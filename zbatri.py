@@ -9,7 +9,14 @@ class ZbaTri:
     attrs:
     x, y: float, float   - triangle position, microns
     h: float             - triangle cathetus, microns
-    t: int (0-7)         - triangle orientation
+    t: int (0-7)         - triangle orientation:
+                           1 | 0
+                           -----
+                           3 | 2
+                           or
+                            \ 4  /
+                           8 > < 6
+                            / 7 \
     d: int (0-7)         - dose table ID
     """
     x = attr.ib(type=float, default=0.0)
