@@ -83,7 +83,7 @@ if __name__ == '__main__':
     tri_mark = Suppress('D')
     tri_orient = Word('01234567', exact=1)
     # x0, y0, height, type, dose
-    tri_params = Group((zba_real + comma) * 3 + Word('01234567', exact=1) + Optional(dose, default='0') + semicolon)
+    tri_params = Group((zba_real + comma) * 3 + tri_orient + Optional(dose, default='0') + semicolon)
 
     zba_rect_array = OneOrMore(rect_mark + rect_params)
     zba_rect_list = rect_mark + rect_params + ZeroOrMore(rect_params)
