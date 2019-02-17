@@ -114,6 +114,10 @@ if __name__ == '__main__':
     res = um_field.parseString(um_text, parseAll=True)
     print(res)
 
+    triangle = tri_mark + tri_params
+    res = triangle.parseString(text, parseAll=True)
+    print(res)
+
 # TODO try regex parsing
 # https://www.accelebrate.com/blog/pyparseltongue-parsing-text-with-pyparsing/
 
