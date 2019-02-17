@@ -62,6 +62,7 @@ if __name__ == '__main__':
     # text = 'R0,.2,5.7,0.2;'
     # text = 'R3,0,.7,.1;2.1,0,.7,.1;4.2,0,.7,.1;6.3,0,.7,.1;8.4,0,.7,.1;'
     # text = 'R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;'
+    text = 'D.0,.0,0.5,0,*1;'
 
     # uw_text = 'UW:19,11,19,12,19,13,19,14,19,15;R0,0,.5,5;1,0,.5,5;2,0,.5,5;3,0,.5,5;4,0,.5,5;@'
     uw_text = 'UW:19,11,19,12,19,13,19,14,19,15;R.0,.2,5.7,.2;R.0,.4,1.9,.2;R.0,.2,5.7,.2;R.0,.4,1.9,.2;@'
@@ -82,7 +83,7 @@ if __name__ == '__main__':
     tri_mark = Suppress('D')
     tri_orient = Word('01234567', exact=1)
     # x0, y0, height, type, dose
-    tri_params = Group((zba_real + comma) * 3 + Word('01234567', exact=1) + Optional(dose, default='0') + semicolon)
+    tri_params = Group((zba_real + comma) * 3 + tri_orient + Optional(dose, default='0') + semicolon)
 
     zba_rect_array = OneOrMore(rect_mark + rect_params)
     zba_rect_list = rect_mark + rect_params + ZeroOrMore(rect_params)
@@ -111,6 +112,10 @@ if __name__ == '__main__':
     # res = uw_field.parseString(uw_text, parseAll=True)
     # res = ur_field.parseString(ur_text, parseAll=True)
     res = um_field.parseString(um_text, parseAll=True)
+    print(res)
+
+    triangle = tri_mark + tri_params
+    res = triangle.parseString(text, parseAll=True)
     print(res)
 
 # TODO try regex parsing
