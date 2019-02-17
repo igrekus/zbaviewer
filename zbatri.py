@@ -32,6 +32,6 @@ class ZbaTri:
 
     @classmethod
     def from_string_list(cls, params):
-        x, y, w, h, d = map(float, params)
-        return cls(x, y, w, h, int(d))
+        x, y, h, t, d = map(float, params)
+        return cls(x, y, h, t, int(d))
 
