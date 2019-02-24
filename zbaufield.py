@@ -93,3 +93,10 @@ class ZbaUfield(object):
 
         rects = [ZbaRect.from_string_list(vals) for vals in rs]
         return cls('UM', default_uf_size, [pos for pos, flag in zip(pos_generator(mat), mat)], '', rects)
+
+    @classmethod
+    def form_uw_string_list(cls, params):
+        ps, *rs = params.asList()
+
+        print(ps)
+        print(rs)
